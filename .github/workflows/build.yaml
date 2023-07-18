@@ -203,8 +203,8 @@ jobs:
           provenance: false
           platforms: linux/amd64,linux/arm64
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/jenkins-agent-maven:${{ needs.init-variable.outputs.container_tag }}
-            ${{ secrets.DOCKER_USERNAME }}/jenkins-agent-maven:latest
+            ${{ secrets.DOCKER_USERNAME }}/jenkins-agent-maven:${{ needs.init-variable.outputs.container_tag }}-jdk1.8
+            ${{ secrets.DOCKER_USERNAME }}/jenkins-agent-maven:latest-jdk1.8
           build-args: |
             REGISTRY_REPO=${{ secrets.DOCKER_USERNAME }}
             JAVA_VERSION=1.8.0
@@ -235,8 +235,8 @@ jobs:
           provenance: false
           platforms: linux/amd64,linux/arm64
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/jenkins-agent-maven:${{ needs.init-variable.outputs.container_tag }}-podman
-            ${{ secrets.DOCKER_USERNAME }}/jenkins-agent-maven:latest-podman
+            ${{ secrets.DOCKER_USERNAME }}/jenkins-agent-maven:${{ needs.init-variable.outputs.container_tag }}-jdk1.8-podman
+            ${{ secrets.DOCKER_USERNAME }}/jenkins-agent-maven:latest-jdk1.8-podman
           build-args: |
             REGISTRY_REPO=${{ secrets.DOCKER_USERNAME }}
             RUNTIME=-podman
@@ -268,8 +268,8 @@ jobs:
           provenance: false
           platforms: linux/amd64,linux/arm64
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/jenkins-agent-maven:${{ needs.init-variable.outputs.container_tag }}
-            ${{ secrets.DOCKER_USERNAME }}/jenkins-agent-maven:latest
+            ${{ secrets.DOCKER_USERNAME }}/jenkins-agent-maven:${{ needs.init-variable.outputs.container_tag }}-jdk11
+            ${{ secrets.DOCKER_USERNAME }}/jenkins-agent-maven:latest-jdk11
           build-args: |
             REGISTRY_REPO=${{ secrets.DOCKER_USERNAME }}
             JAVA_VERSION=11
@@ -300,8 +300,8 @@ jobs:
           provenance: false
           platforms: linux/amd64,linux/arm64
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/jenkins-agent-maven:${{ needs.init-variable.outputs.container_tag }}-podman
-            ${{ secrets.DOCKER_USERNAME }}/jenkins-agent-maven:latest-podman
+            ${{ secrets.DOCKER_USERNAME }}/jenkins-agent-maven:${{ needs.init-variable.outputs.container_tag }}-jdk11-podman
+            ${{ secrets.DOCKER_USERNAME }}/jenkins-agent-maven:latest-jdk11-podman
           build-args: |
             REGISTRY_REPO=${{ secrets.DOCKER_USERNAME }}
             RUNTIME=-podman
