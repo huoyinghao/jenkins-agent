@@ -178,7 +178,7 @@ jobs:
             RUNTIME=-podman
           cache-from: type=gha
           cache-to: type=gha,mode=max
-  build-agent-maven-java1.8:
+  build-agent-maven-java1_8:
     needs: [ build-jenkins-agent-base, init-variable ]
     runs-on: ubuntu-latest
     steps:
@@ -210,7 +210,7 @@ jobs:
             JAVA_VERSION=1.8.0
           cache-from: type=gha
           cache-to: type=gha,mode=max
-  build-agent-maven-java1.8-podman:
+  build-agent-maven-java1_8-podman:
     needs: [ build-jenkins-agent-base-podman, init-variable ]
     runs-on: ubuntu-latest
     steps:
