@@ -228,8 +228,8 @@ jobs:
       - name: build jenkins agent with maven and podman
         uses: docker/build-push-action@v4.1.1
         with:
-          context: ./jenkins-agent/go
-          file: ./jenkins-agent/go/Dockerfile
+          context: ./jenkins-agent/maven
+          file: ./jenkins-agent/maven/Dockerfile
           github-token: ${{ secrets.GITHUB_TOKEN }}
           push: true
           provenance: false
@@ -293,8 +293,8 @@ jobs:
       - name: build jenkins agent with maven and podman
         uses: docker/build-push-action@v4.1.1
         with:
-          context: ./jenkins-agent/go
-          file: ./jenkins-agent/go/Dockerfile
+          context: ./jenkins-agent/maven
+          file: ./jenkins-agent/maven/Dockerfile
           github-token: ${{ secrets.GITHUB_TOKEN }}
           push: true
           provenance: false
