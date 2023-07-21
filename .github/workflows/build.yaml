@@ -1,6 +1,10 @@
 name: Build Images
 on:
   pull_request_target:
+  push:
+    tags:
+      - v[0-9]+.[0-9]+.[0-9]+
+      - v[0-9]+.[0-9]+.[0-9]+-rc[0-9]+
 jobs:
   init-variable:
     runs-on: ubuntu-latest
