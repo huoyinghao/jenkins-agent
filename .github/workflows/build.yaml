@@ -48,7 +48,7 @@ jobs:
           provenance: false
           platforms: linux/amd64,linux/arm64
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/jenkins:${{ needs.init-variable.outputs.container_tag }}
+            ${{ secrets.DOCKER_USERNAME }}/jenkins:${{ needs.init-variable.outputs.container_tag }}-2.413
             ${{ secrets.DOCKER_USERNAME }}/jenkins:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
