@@ -46,7 +46,7 @@ jobs:
           context: ./
           file: ./Dockerfile
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          push: true
+          push: ${{ github.event_name == 'push' }}
           provenance: false
           platforms: linux/amd64,linux/arm64
           tags: |
@@ -79,7 +79,7 @@ jobs:
           context: ./jenkins-agent/base
           file: ./jenkins-agent/base/Dockerfile
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          push: true
+          push: ${{ github.event_name == 'push' }}
           provenance: false
           platforms: linux/amd64,linux/arm64
           tags: |
@@ -93,7 +93,7 @@ jobs:
           context: ./jenkins-agent/base
           file: ./jenkins-agent/base/podman/Dockerfile
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          push: true
+          push: ${{ github.event_name == 'push' }}
           provenance: false
           platforms: linux/amd64,linux/arm64
           tags: |
@@ -110,9 +110,9 @@ jobs:
       matrix:
         runtime: [docker, podman]
         agent: [python, go, nodejs]
-      include:
-        - agent: nodejs
-          version: 16.17.0
+        include:
+          - agent: nodejs
+            version: 16.17.0
     runs-on: ubuntu-latest
     steps:
       - name: checkout
@@ -129,21 +129,23 @@ jobs:
         run: |
           echo "suffix=$([ ${{ matrix.runtime }} == podman ] && (echo -podman))" >> $GITHUB_OUTPUT
           echo "image=jenkins-agent-${{ matrix.agent }}" >> $GITHUB_OUTPUT
+          echo "dockerfile=./jenkins-agent/${{ matrix.agent }}/Dockerfile" >> $GITHUB_OUTPUT
+          echo "context=./jenkins-agent/${{ matrix.agent }}/" >> $GITHUB_OUTPUT
       - name: use setup-buildx-action
         uses: docker/setup-buildx-action@v2
       - name: build jenkins agent with golang
         uses: docker/build-push-action@v4.1.1
         with:
-          context: ./jenkins-agent/
-          file: ./jenkins-agent/go/Dockerfile
+          context: ${{ steps.step-variable.outputs.context }}
+          file: ${{ steps.step-variable.outputs.dockerfile }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          push: true
+          push: ${{ github.event_name == 'push' }}
           provenance: false
           platforms: linux/amd64,linux/arm64
+          # In the format of "amambadev/jenkins-agent-go:v0.2.1-podman"   
           tags: |
-            # amambadev/jenkins-agent-go:v0.2.1-podman
-            ${{ secrets.DOCKER_USERNAME }}/${{ steps.step-variable.outputs.suffix }}:${{ needs.init-variable.outputs.container_tag }}${{ steps.step-variable.outputs.suffix }}
-            ${{ secrets.DOCKER_USERNAME }}/${{ steps.step-variable.outputs.suffix }}:latest${{ steps.step-variable.outputs.suffix }}
+            ${{ secrets.DOCKER_USERNAME }}/${{ steps.step-variable.outputs.image }}:${{ needs.init-variable.outputs.container_tag }}${{ steps.step-variable.outputs.suffix }}
+            ${{ secrets.DOCKER_USERNAME }}/${{ steps.step-variable.outputs.image }}:latest${{ steps.step-variable.outputs.suffix }}
           build-args: |
             REGISTRY_REPO=${{ secrets.DOCKER_USERNAME }}
             RUNTIME=${{ steps.step-variable.outputs.suffix }}
@@ -181,7 +183,7 @@ jobs:
           context: ./jenkins-agent/maven
           file: ./jenkins-agent/maven/Dockerfile
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          push: true
+          push: ${{ github.event_name == 'push' }}
           provenance: false
           platforms: linux/amd64,linux/arm64
           tags: |
