@@ -195,3 +195,22 @@ jobs:
             JAVA_VERSION=${{ matrix.version }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+  e2e:
+    runs-on: ubuntu-latest
+    steps:  
+      - name: checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: v3.12.1
+
+      - name: Create kind cluster
+        uses: helm/kind-action@v1.7.0
+
+      - name: Run chart-testing (install)
+        run: make e2e-test
