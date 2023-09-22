@@ -209,8 +209,14 @@ jobs:
         with:
           version: v3.12.1
 
-      - name: Set up Kind
-        uses: engineerd/setup-kind@v0.5.0
+      - name: Create kind cluster
+        uses: helm/kind-action@v1.7.0
 
-      - name: Run chart-testing (install)
-        run: make e2e-test
+      - name: Load image on the node
+        run: |
+          kind load docker-image --name=kind ${{ secrets.DOCKER_USERNAME }}/jenkins:${{ needs.init-variable.outputs.container_tag }}-2.413
+          kind load docker-image --name=kind ${{ secrets.DOCKER_USERNAME }}/jenkins-agent-base:${{ needs.init-variable.outputs.container_tag }}
+
+
+      - name: Deploy Chart
+        run: make deploy

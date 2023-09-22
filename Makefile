@@ -32,10 +32,9 @@ render:
 build:
 	./hack/build.sh
 
-
 .PHONY: deploy
 deploy:
-	./hack/deploy.sh $(VERSION)
+	./hack/deploy.sh
 
 
 .PHONY: e2e-test
