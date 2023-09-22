@@ -99,6 +99,14 @@ https://github.com/helm/charts/issues/5167#issuecomment-619137759
     {{- print .Values.pullPolicy -}}
 {{- end -}}
 
+{{- define "jenkins.master.javaOpts" -}}
+    {{- $javaOpts := default "" .Values.Master.JavaOpts | replace "\n" " " }}
+    {{- if .Values.trace.enabled  }}
+       {{- $javaOpts = printf "%s -javaagent:/otel-auto-instrumentation/javaagent.jar" $javaOpts -}} 
+    {{- end }}
+{{- $javaOpts -}}
+{{- end -}}
+
 {{- define "jenkins.event.receiver" -}}
     {{- $defaultReceiver := "http://amamba-devops-server.%s:80/apis/internel.amamba.io/devops/pipeline/v1alpha1/webhooks/jenkins" -}}
     {{- $sidecarReceiver := "http://localhost:9090/event" -}}

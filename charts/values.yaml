@@ -11,10 +11,12 @@ plugins:
     receiver: ""
 
 trace:
+  enabled: false
   image:
     registry: ghcr.m.daocloud.io
     repository: open-telemetry/opentelemetry-operator/autoinstrumentation-java
     tag: 1.17.0
+
 Master:
   StatefulSet:
     Enabled: false
@@ -65,7 +67,6 @@ Master:
     -XX:+DisableExplicitGC
     -XX:+UnlockDiagnosticVMOptions
     -XX:+UnlockExperimentalVMOptions
-    -javaagent:/otel-auto-instrumentation/javaagent.jar
   Deploy:
     NotWithApiServer: false
     # If the cluster where jenkins is deployed and amamba-apiserver are not in the same cluster, you need to fill in this item

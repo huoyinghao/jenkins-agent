@@ -59,7 +59,7 @@ function util::wait_pod_ready() {
     set -e
     if [ $ret -ne 0 ];then
       echo "kubectl describe info: $(kubectl describe pod -l app=${pod_label} -n ${pod_namespace})"
-      echo "kubectl logs pod: $(kubectl logs pod -l app=${pod_label} -n ${pod_namespace})"
+      echo "kubectl logs pod: $(kubectl logs -l app=${pod_label} -n ${pod_namespace})"
     fi
     return ${ret}
 }
@@ -74,7 +74,7 @@ function util::kubectl_with_retry() {
         ret=$?
         if [[ ${ret} -ne 0 ]]; then
             echo "kubectl $@ failed, retrying(${i} times)"
-            sleep 1
+            sleep 30
             continue
         else
           ((count++))

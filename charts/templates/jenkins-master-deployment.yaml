@@ -107,6 +107,7 @@ spec:
               mountPath: /usr/share/jenkins/ref/secrets/
               name: secrets-dir
 
+        {{- if .Values.trace.enabled }}
         - name: opentelemetry-auto-instrumentation
           image: "{{ .Values.trace.image.registry }}/{{ .Values.trace.image.repository }}:{{ .Values.trace.image.tag }}"
           command:
@@ -116,6 +117,8 @@ spec:
           volumeMounts:
             - name: opentelemetry-auto-instrumentation
               mountPath: /otel-auto-instrumentation
+        {{- end }}
+      
       containers:
         - name: {{ template "jenkins.fullname" . }}
           image: {{ template "jenkins.image" . }}
@@ -157,7 +160,7 @@ spec:
               #{{/*              value: Asia/Shanghai*/}}
               value: "{{ default "Asia/Shanghai" .Values.Master.TZ | replace "\n" " "}}"
             - name: JAVA_TOOL_OPTIONS
-              value: "{{ default "" .Values.Master.JavaOpts | replace "\n" " "}}"
+              value: {{ template "jenkins.master.javaOpts" . }}
             - name: JENKINS_OPTS
               value: "{{ if .Values.Master.JenkinsUriPrefix }}--prefix={{ .Values.Master.JenkinsUriPrefix }} {{ end }}{{ default "" .Values.Master.JenkinsOpts}}"
             {{- if .Values.Master.UseSecurity }}
@@ -213,35 +216,32 @@ spec:
 {{- if .Values.Persistence.mounts }}
 {{ toYaml .Values.Persistence.mounts | indent 12 }}
 {{- end }}
+            {{- if .Values.trace.enabled }}
             - name: opentelemetry-auto-instrumentation
               mountPath: /otel-auto-instrumentation
+            {{- end }}
             - mountPath: /var/jenkins_home
               name: jenkins-home
               readOnly: false
-            -
-              mountPath: /var/jenkins_config
+            - mountPath: /var/jenkins_config
               name: jenkins-config
               readOnly: true
             {{- if .Values.Master.CredentialsXmlSecret }}
-            -
-              mountPath: /var/jenkins_credentials
+            - mountPath: /var/jenkins_credentials
               name: jenkins-credentials
               readOnly: true
             {{- end }}
             {{- if .Values.Master.SecretsFilesSecret }}
-            -
-              mountPath: /var/jenkins_secrets
+            - mountPath: /var/jenkins_secrets
               name: jenkins-secrets
               readOnly: true
             {{- end }}
             {{- if .Values.Master.Jobs }}
-            -
-              mountPath: /var/jenkins_jobs
+            - mountPath: /var/jenkins_jobs
               name: jenkins-jobs
               readOnly: true
             {{- end }}
-            -
-              mountPath: /usr/share/jenkins/ref/secrets/
+            - mountPath: /usr/share/jenkins/ref/secrets/
               name: secrets-dir
               readOnly: false
         {{- if .Values.eventProxy.enabled }}
@@ -283,8 +283,10 @@ spec:
             periodSeconds: 3
       {{- end }}
       volumes:
+      {{- if .Values.trace.enabled }}
       - name: opentelemetry-auto-instrumentation
         emptyDir: {}
+      {{- end }}
       {{- if .Values.eventProxy.enabled }}
       - name: event-proxy-config
         configMap:
