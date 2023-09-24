@@ -46,7 +46,7 @@ jobs:
           context: ./
           file: ./Dockerfile
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          push: ${{ github.event_name == 'push' }}
+          push: true
           provenance: false
           platforms: linux/amd64,linux/arm64
           tags: |
@@ -212,10 +212,6 @@ jobs:
 
       - name: Create kind cluster
         uses: helm/kind-action@v1.7.0
-
-      - name: Load image on the node
-        run: |
-          kind load docker-image --name=kind ${{ secrets.DOCKER_USERNAME }}/jenkins:${{ needs.init-variable.outputs.container_tag }}-2.413
 
       - name: Deploy Chart
         run: |
