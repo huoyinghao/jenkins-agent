@@ -6,20 +6,18 @@ set -o pipefail
 
 source hack/util.sh
 
-# specific a helm package version
-CHART_VERSION=${1:-}
+# specific a jenkins and agent version
+VERSION=${1:-"v0.2.1"}
 KUBE_CONF=${2:-"/root/.kube/config"}
 TARGET_NS=${3:-"jenkins"}
 
 LOCAL_RELEASE_NAME=jenkins
-values="-f config/e2e.yaml"
 
-# If CHART_VERSION is empty, then use the local chart package
-if [[ -n "${CHART_VERSION}" ]]; then
-    values="${values} --version ${CHART_VERSION}"
-fi
+echo "Rendering values.yaml with VERSION=${VERSION}"
+envsubst -i config/e2e.yaml -o /tmp/e2e.yaml
 
-# install or upgrade
+values="-f /tmp/e2e.yaml"
+
 set -x
 
 helm upgrade --install  --create-namespace --cleanup-on-fail \

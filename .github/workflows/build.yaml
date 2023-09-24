@@ -198,7 +198,7 @@ jobs:
 
   e2e:
     runs-on: ubuntu-latest
-    needs: [ build-jenkins, build-jenkins-agent-base ]
+    needs: [ init-variable ]
     steps:  
       - name: checkout
         uses: actions/checkout@v3
@@ -216,8 +216,8 @@ jobs:
       - name: Load image on the node
         run: |
           kind load docker-image --name=kind ${{ secrets.DOCKER_USERNAME }}/jenkins:${{ needs.init-variable.outputs.container_tag }}-2.413
-          kind load docker-image --name=kind ${{ secrets.DOCKER_USERNAME }}/jenkins-agent-base:${{ needs.init-variable.outputs.container_tag }}
-
 
       - name: Deploy Chart
-        run: make deploy
+        run: |
+          ./hack/install/envsubst.sh
+          VERSION=${{ needs.init-variable.outputs.container_tag }} make deploy 

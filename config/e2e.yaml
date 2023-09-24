@@ -8,7 +8,7 @@ Master:
     SchedulerName: ""
   Name: jenkins-master
   Image: "amambadev/jenkins"
-  ImageTag: "v0.2.1-2.413"
+  ImageTag: "${VERSION}-2.413"
 
 Agent:
   Image: "jenkins/inbound-agent"
@@ -16,20 +16,20 @@ Agent:
   Builder:
     Base:
       Image: amambadev/jenkins-agent-base
-      Tag: v0.2.1
+      Tag: ${VERSION}
     NodeJs16:
       Image: amambadev/jenkins-agent-nodejs
-      Tag: v0.2.1
+      Tag: ${VERSION}
     Maven:
       Image: amambadev/jenkins-agent-maven
-      Tag: v0.2.1-jdk1.8
+      Tag: ${VERSION}-jdk1.8
     Mavenjdk11:
       Image: amambadev/jenkins-agent-maven
-      Tag: v0.2.1-jdk11
+      Tag: ${VERSION}-jdk11
     Golang:
       Image: amambadev/jenkins-agent-go
-      Tag: v0.2.1
+      Tag: ${VERSION}
     Python:
       Image: amambadev/jenkins-agent-python
-      Tag: v0.2.1
+      Tag: ${VERSION}
     ContainerRuntime: docker # Available values: docker, podman

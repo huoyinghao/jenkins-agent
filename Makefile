@@ -34,7 +34,7 @@ build:
 
 .PHONY: deploy
 deploy:
-	./hack/deploy.sh
+	./hack/deploy.sh $(VERSION)
 
 
 .PHONY: e2e-test
