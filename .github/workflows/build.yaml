@@ -79,7 +79,7 @@ jobs:
           context: ./jenkins-agent/base
           file: ./jenkins-agent/base/Dockerfile
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          push: ${{ github.event_name == 'push' }}
+          push: true
           provenance: false
           platforms: linux/amd64,linux/arm64
           tags: |
@@ -93,7 +93,7 @@ jobs:
           context: ./jenkins-agent/base
           file: ./jenkins-agent/base/podman/Dockerfile
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          push: ${{ github.event_name == 'push' }}
+          push: true
           provenance: false
           platforms: linux/amd64,linux/arm64
           tags: |
@@ -139,7 +139,7 @@ jobs:
           context: ${{ steps.step-variable.outputs.context }}
           file: ${{ steps.step-variable.outputs.dockerfile }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          push: ${{ github.event_name == 'push' }}
+          push: true
           provenance: false
           platforms: linux/amd64,linux/arm64
           # In the format of "amambadev/jenkins-agent-go:v0.2.1-podman"   
@@ -183,7 +183,7 @@ jobs:
           context: ./jenkins-agent/maven
           file: ./jenkins-agent/maven/Dockerfile
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          push: ${{ github.event_name == 'push' }}
+          push: true
           provenance: false
           platforms: linux/amd64,linux/arm64
           tags: |
@@ -216,4 +216,4 @@ jobs:
       - name: Deploy Chart
         run: |
           ./hack/install/envsubst.sh
-          VERSION=${{ needs.init-variable.outputs.container_tag }} make deploy 
+          VERSION=${{ needs.init-variable.outputs.container_tag }} make deploy

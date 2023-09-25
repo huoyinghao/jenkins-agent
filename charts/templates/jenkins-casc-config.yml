@@ -361,7 +361,6 @@ data:
 
     unclassified:
       location:
-        # https://gitlab.daocloud.cn/ndx/amamba/-/issues/78
         url: {{ include "location.url" . }}
       gitLabServers:
         servers:

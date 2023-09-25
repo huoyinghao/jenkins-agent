@@ -11,7 +11,6 @@ metadata:
   name: {{ $clusterRoleBindingName }}-role-binding
   labels:
     app: {{ $serviceName }}
-    {{/*    https://gitlab.daocloud.cn/ndx/engineering/application/jenkins-helmchart/-/jobs/1012956*/}}
     chart: "{{ .Chart.Name }}-{{ include "charts.version" . }}"
     release: "{{ .Release.Name }}"
     heritage: "{{ .Release.Service }}"

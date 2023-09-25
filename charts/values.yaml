@@ -134,7 +134,7 @@ Master:
     - name: EMAIL_USE_SSL
       value: "false"
     - name: EMAIL_FROM_NAME
-      value: "DaoCloud"
+      value: "Jenkins"
     - name: EMAIL_FROM_ADDR
       value: "admin@example.com"
     - name: EMAIL_FROM_PASS
@@ -190,7 +190,7 @@ Master:
       def env = System.getenv()
 
       // Roles
-      def globalRoleRead = "daocloud-user"
+      def globalRoleRead = "amamba-user"
       def globalRoleAdmin = "admin"
       def UserNameAdmin = "admin"
 
