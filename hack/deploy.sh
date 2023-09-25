@@ -19,12 +19,12 @@ envsubst -i config/e2e.yaml -o /tmp/e2e.yaml
 values="-f /tmp/e2e.yaml"
 
 if [[ -n ${KUBE_CONF} ]]; then 
-    values="${values} --kubeconfig ${KUBE_CONF}"
+    export KUBECONFIG="${KUBE_CONF}"
 fi
 
 set -x
 
-helm upgrade --install  --create-namespace --cleanup-on-fail \
+helm upgrade --install --wait  --create-namespace --cleanup-on-fail \
       ${LOCAL_RELEASE_NAME}  charts/ \
       -n "${TARGET_NS}" \
       ${values} 
@@ -32,6 +32,6 @@ helm upgrade --install  --create-namespace --cleanup-on-fail \
 set +x
 
 # check it
-helm list -n "${TARGET_NS}" --kubeconfig ${KUBE_CONF}
+helm list -n "${TARGET_NS}"
 
 util::wait_pod_ready "${LOCAL_RELEASE_NAME}" "${TARGET_NS}" 600s
