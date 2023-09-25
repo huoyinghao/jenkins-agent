@@ -8,7 +8,7 @@ source hack/util.sh
 
 # specific a jenkins and agent version
 VERSION=${1:-"v0.2.1"}
-KUBE_CONF=${2:-"/root/.kube/config"}
+KUBE_CONF=${2:-}
 TARGET_NS=${3:-"jenkins"}
 
 LOCAL_RELEASE_NAME=jenkins
@@ -18,13 +18,16 @@ envsubst -i config/e2e.yaml -o /tmp/e2e.yaml
 
 values="-f /tmp/e2e.yaml"
 
+if [[ -n ${KUBE_CONF} ]]; then 
+    values="${values} --kubeconfig ${KUBE_CONF}"
+fi
+
 set -x
 
 helm upgrade --install  --create-namespace --cleanup-on-fail \
       ${LOCAL_RELEASE_NAME}  charts/ \
-      ${values} \
       -n "${TARGET_NS}" \
-      --kubeconfig "${KUBE_CONF}"
+      ${values} 
 
 set +x
 
