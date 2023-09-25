@@ -5,6 +5,8 @@ on:
     tags:
       - v[0-9]+.[0-9]+.[0-9]+
       - v[0-9]+.[0-9]+.[0-9]+-rc[0-9]+
+      - v[0-9]+.[0-9]+.[0-9]+-(alpha|beta).[0-9]+
+
   workflow_dispatch:
   
 jobs:
@@ -198,6 +200,7 @@ jobs:
 
   e2e:
     runs-on: ubuntu-latest
+    if: github.ref_type != 'tag'
     needs: [ init-variable, build-jenkins ]
     steps:  
       - name: checkout
@@ -217,3 +220,52 @@ jobs:
         run: |
           ./hack/install/envsubst.sh
           VERSION=${{ needs.init-variable.outputs.container_tag }} make deploy
+
+  publish-chart:
+    if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: write
+    env:
+      HELM_CHARTS_DIR: charts
+      HELM_CHART_NAME: jenkins
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Install Helm
+        uses: azure/setup-helm@v3
+
+      - name: Get the version
+        id: get_version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/}
+          echo "VERSION=${VERSION}" >> $GITHUB_OUTPUT
+
+      - name: Tag helm chart image
+        run: |
+          image_tag=${{ steps.get_version.outputs.VERSION }}
+          chart_version=${{ steps.get_version.outputs.VERSION }}
+          sed -i "s/latest/${image_tag}/g" $HELM_CHARTS_DIR/values.yaml
+          chart_smever=${chart_version#"v"}
+          sed -i "s/0.1.0/${chart_smever}/g" $HELM_CHARTS_DIR/Chart.yaml
+
+      - uses: getsentry/action-github-app-token@v2
+        id: get_app_token
+        with:
+            app_id: ${{ secrets.APP_ID }}
+            private_key: ${{ secrets.APP_PRIVATE_KEY }}
+      - name: Sync Chart Repo
+        run: |
+          git config --global user.email "amamba[bot]@users.noreply.github.com"
+          git config --global user.name "amamba[bot]"
+          git clone https://x-access-token:${{ steps.get_app_token.outputs.token }}@github.com/amamba-io/charts.git amamba-charts
+          helm package $HELM_CHARTS_DIR --destination ./amamba-charts/docs/
+          helm repo index --url https://amamba-io.github.io/charts ./amamba-charts/docs/
+          cd amamba-charts/
+          git add docs/
+          chart_version=${{ steps.get_version.outputs.VERSION }}
+          git commit -m "update vela-core chart ${chart_version}"
+          git push https://x-access-token:${{ steps.get_app_token.outputs.token }}@github.com/amamba-io/charts.git
