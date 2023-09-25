@@ -13,7 +13,7 @@ plugins:
 trace:
   enabled: false
   image:
-    registry: ghcr.m.daocloud.io
+    registry: ghcr.io
     repository: open-telemetry/opentelemetry-operator/autoinstrumentation-java
     tag: 1.17.0
 
@@ -26,7 +26,7 @@ Master:
     # Name of the Kubernetes scheduler to use
     SchedulerName: ""
   Name: jenkins-master
-  Image: "amamba/jenkins"
+  Image: "amambadev/jenkins"
   ImageTag: "latest-2.413"
   ImagePullPolicy: "IfNotPresent"
   ImagePullSecret: ""

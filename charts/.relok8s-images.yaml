@@ -1,5 +1,4 @@
 - "{{ .image.registry }}/{{ .Master.Image }}:{{ .Master.ImageTag }}"
-- "{{ .image.registry }}/{{ .Master.Image }}:{{ .Master.ImageTag }}"
 - "{{ .image.registry }}/{{ .Agent.Image }}:{{ .Agent.ImageTag }}"
 - "{{ .image.registry }}/{{ .Agent.Builder.Base.Image }}:{{ .Agent.Builder.Base.Tag }}-podman"
 - "{{ .image.registry }}/{{ .Agent.Builder.Base.Image }}:{{ .Agent.Builder.Base.Tag }}"
