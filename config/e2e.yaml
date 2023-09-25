@@ -1,0 +1,35 @@
+Master:
+  StatefulSet:
+    Enabled: false
+    Replicas: 1
+    # StatefulSetUpdateStrategy must be 'RollingUpdate' or 'OnDelete'
+    UpdateStrategy: RollingUpdate
+    # Name of the Kubernetes scheduler to use
+    SchedulerName: ""
+  Name: jenkins-master
+  Image: "amambadev/jenkins"
+  ImageTag: "${VERSION}-2.413"
+
+Agent:
+  Image: "jenkins/inbound-agent"
+  ImageTag: 4.10-2
+  Builder:
+    Base:
+      Image: amambadev/jenkins-agent-base
+      Tag: ${VERSION}
+    NodeJs16:
+      Image: amambadev/jenkins-agent-nodejs
+      Tag: ${VERSION}
+    Maven:
+      Image: amambadev/jenkins-agent-maven
+      Tag: ${VERSION}-jdk1.8
+    Mavenjdk11:
+      Image: amambadev/jenkins-agent-maven
+      Tag: ${VERSION}-jdk11
+    Golang:
+      Image: amambadev/jenkins-agent-go
+      Tag: ${VERSION}
+    Python:
+      Image: amambadev/jenkins-agent-python
+      Tag: ${VERSION}
+    ContainerRuntime: docker # Available values: docker, podman

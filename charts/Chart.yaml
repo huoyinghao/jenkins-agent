@@ -1,0 +1,14 @@
+appVersion: 0.1.0
+description: jenkins charts of amamba.
+home: https://github.com/amamba-io/jenkins-agent
+icon: https://mirrors.tuna.tsinghua.edu.cn/jenkins/art/jenkins-logo/logo.svg
+name: jenkins
+keywords:
+  - jenkins
+  - ci
+  - cd
+version: 0.1.0
+apiVersion: v2
+annotations:
+  addon.kpanda.io/source: addon
+  addon.kpanda.io/repo: addon

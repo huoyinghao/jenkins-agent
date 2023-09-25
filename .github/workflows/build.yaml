@@ -46,7 +46,7 @@ jobs:
           context: ./
           file: ./Dockerfile
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          push: ${{ github.event_name == 'push' }}
+          push: true
           provenance: false
           platforms: linux/amd64,linux/arm64
           tags: |
@@ -79,7 +79,7 @@ jobs:
           context: ./jenkins-agent/base
           file: ./jenkins-agent/base/Dockerfile
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          push: ${{ github.event_name == 'push' }}
+          push: true
           provenance: false
           platforms: linux/amd64,linux/arm64
           tags: |
@@ -93,7 +93,7 @@ jobs:
           context: ./jenkins-agent/base
           file: ./jenkins-agent/base/podman/Dockerfile
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          push: ${{ github.event_name == 'push' }}
+          push: true
           provenance: false
           platforms: linux/amd64,linux/arm64
           tags: |
@@ -139,7 +139,7 @@ jobs:
           context: ${{ steps.step-variable.outputs.context }}
           file: ${{ steps.step-variable.outputs.dockerfile }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          push: ${{ github.event_name == 'push' }}
+          push: true
           provenance: false
           platforms: linux/amd64,linux/arm64
           # In the format of "amambadev/jenkins-agent-go:v0.2.1-podman"   
@@ -183,7 +183,7 @@ jobs:
           context: ./jenkins-agent/maven
           file: ./jenkins-agent/maven/Dockerfile
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          push: ${{ github.event_name == 'push' }}
+          push: true
           provenance: false
           platforms: linux/amd64,linux/arm64
           tags: |
@@ -195,3 +195,25 @@ jobs:
             JAVA_VERSION=${{ matrix.version }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+  e2e:
+    runs-on: ubuntu-latest
+    needs: [ init-variable, build-jenkins ]
+    steps:  
+      - name: checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: v3.12.1
+
+      - name: Create kind cluster
+        uses: helm/kind-action@v1.7.0
+
+      - name: Deploy Chart
+        run: |
+          ./hack/install/envsubst.sh
+          VERSION=${{ needs.init-variable.outputs.container_tag }} make deploy
