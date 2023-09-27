@@ -65,20 +65,8 @@ https://github.com/helm/charts/issues/5167#issuecomment-619137759
     {{- end -}}
 {{- end -}}
 
-{{- define "jenkins.image" -}}
-    {{- $jenkinsRegistryName := .Values.image.registry -}}
-    {{- $repositoryName := .Values.Master.Image -}}
-    {{- printf "%s/%s:%s" $jenkinsRegistryName $repositoryName .Values.Master.ImageTag -}}
-{{- end -}}
-
-{{- define "jenkins-agent.image.registry" -}}
-    {{- $jenkinsRegistryName := .Values.image.registry -}}
-    {{- printf "%s" $jenkinsRegistryName -}}
-{{- end -}}
-
-{{- define "jenkins-agent.jnlp.image" -}}
-    {{- $registry := include "jenkins-agent.image.registry" . -}}
-    {{- printf "%s/%s:%s" $registry .Values.Agent.Image .Values.Agent.ImageTag -}}
+{{- define "jenkins-agent.jnlp.image" }}
+    {{- include "jenkins.images.image" ( dict "imageRoot" .Values.Agent "global" .Values.global "root" .Values.image ) }}
 {{- end -}}
 
 {{- define "jenkins-agent.volume" -}}

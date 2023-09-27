@@ -13,4 +13,4 @@
 - "{{ .image.registry }}/{{ .Agent.Builder.Python.Image }}:{{ .Agent.Builder.Python.Tag }}-podman"
 - "{{ .image.registry }}/{{ .Agent.Builder.Python.Image }}:{{ .Agent.Builder.Python.Tag }}"
 - "{{ .trace.image.registry }}/{{ .trace.image.repository }}:{{ .trace.image.tag }}"
-- "{{ .image.registry }}/{{ .eventProxy.image.repository }}:{{ .eventProxy.image.tag }}"
+- "{{ .eventProxy.image.registry }}/{{ .eventProxy.image.repository }}:{{ .eventProxy.image.tag }}"

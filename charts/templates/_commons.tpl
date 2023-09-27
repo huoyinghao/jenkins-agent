@@ -24,3 +24,53 @@ imagePullSecrets:
     {{- end }}
   {{- end }}
 {{- end -}}
+
+{{/*
+Return the proper image name for the `image.registry/repository/tag` style values
+eg. trace, eventProxy
+{{ include "common.images.image" ( dict "imageRoot" .Values.path.to.the.image "global" $) }}
+*/}}
+{{- define "common.images.image" -}}
+{{- $registryName := .imageRoot.registry -}}
+{{- $repositoryName := .imageRoot.repository -}}
+{{- $tag := .imageRoot.tag | toString -}}
+{{- if .global }}
+    {{- if .global.imageRegistry }}
+     {{- $registryName = .global.imageRegistry -}}
+    {{- end -}}
+{{- end -}}
+{{- if $registryName }}
+{{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
+{{- else -}}
+{{- printf "%s:%s" $repositoryName $tag -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return the proper image name for the `Image/ImageTag` style values
+eg. Master, Agent, Agent.Builder.Base
+{{ include "jenkins.images.image" ( dict "imageRoot" .Values.path.to.the.image "global" .Values.global "root" .Values.image ) }}
+*/}}
+{{- define "jenkins.images.image" -}}
+{{- $registryName := .root.registry -}}
+{{- $repositoryName := .imageRoot.Image -}}
+{{- $tag := .imageRoot.ImageTag | toString -}}
+{{- if .global }}
+    {{- if .global.imageRegistry }}
+     {{- $registryName = .global.imageRegistry -}}
+    {{- end -}}
+{{- end -}}
+{{- if $registryName }}
+{{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
+{{- else -}}
+{{- printf "%s:%s" $repositoryName $tag -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Shortcut to return image for builders
+{{ include "builder.image" ( dict "builder" .Values.Agent.Builder.Base "root" .) }}
+*/}}
+{{- define "builder.image" }}
+  {{- include "jenkins.images.image" (dict "imageRoot" .builder "global" .root.Values.global "root" .root.Values.image) -}}
+{{- end -}}

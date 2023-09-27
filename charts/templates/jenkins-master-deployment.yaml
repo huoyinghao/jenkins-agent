@@ -57,7 +57,7 @@ spec:
 {{- end }}
       initContainers:
         - name: "copy-default-config"
-          image: {{ template "jenkins.image" . }}
+          image: {{ include "jenkins.images.image" (dict "imageRoot" .Values.Master "global" .Values.global "root" .Values.image ) }}
           imagePullPolicy: {{ template "jenkins.image.pullPolicy" . }}
           command: [ "sh", "/var/jenkins_config/apply_config.sh" ]
           env:
@@ -79,37 +79,30 @@ spec:
           resources:
 {{ toYaml .Values.Master.resources | indent 12 }}
           volumeMounts:
-            -
-              mountPath: /var/jenkins_home
+            - mountPath: /var/jenkins_home
               name: jenkins-home
-            -
-              mountPath: /var/jenkins_config
+            - mountPath: /var/jenkins_config
               name: jenkins-config
             {{- if .Values.Master.CredentialsXmlSecret }}
-            -
-              mountPath: /var/jenkins_credentials
+            - mountPath: /var/jenkins_credentials
               name: jenkins-credentials
               readOnly: true
             {{- end }}
             {{- if .Values.Master.SecretsFilesSecret }}
-            -
-              mountPath: /var/jenkins_secrets
+            - mountPath: /var/jenkins_secrets
               name: jenkins-secrets
               readOnly: true
             {{- end }}
             {{- if .Values.Master.Jobs }}
-            -
-              mountPath: /var/jenkins_jobs
+            - mountPath: /var/jenkins_jobs
               name: jenkins-jobs
               readOnly: true
             {{- end }}
-            -
-              mountPath: /usr/share/jenkins/ref/secrets/
+            - mountPath: /usr/share/jenkins/ref/secrets/
               name: secrets-dir
-
         {{- if .Values.trace.enabled }}
         - name: opentelemetry-auto-instrumentation
-          image: "{{ .Values.trace.image.registry }}/{{ .Values.trace.image.repository }}:{{ .Values.trace.image.tag }}"
+          image: "{{ include "common.images.image" (dict "imageRoot" .Values.trace.image "global" .Values.global ) -}}"
           command:
             - sh
             - '-c'
@@ -118,10 +111,9 @@ spec:
             - name: opentelemetry-auto-instrumentation
               mountPath: /otel-auto-instrumentation
         {{- end }}
-      
       containers:
         - name: {{ template "jenkins.fullname" . }}
-          image: {{ template "jenkins.image" . }}
+          image: "{{ include "jenkins.images.image" (dict "imageRoot" .Values.Master "global" .Values.global "root" .Values.image ) }}"
           imagePullPolicy: {{ template "jenkins.image.pullPolicy" . }}
           {{- if .Values.Master.UseSecurity }}
           args: [ "--argumentsRealm.passwd.$(ADMIN_USER)=$(ADMIN_PASSWORD)",  "--argumentsRealm.roles.$(ADMIN_USER)=admin"]
@@ -157,7 +149,6 @@ spec:
             - name: OTEL_TRACES_SAMPLER
               value: always_on
             - name: TZ
-              #{{/*              value: Asia/Shanghai*/}}
               value: "{{ default "Asia/Shanghai" .Values.Master.TZ | replace "\n" " "}}"
             - name: JAVA_TOOL_OPTIONS
               value: {{ template "jenkins.master.javaOpts" . }}
@@ -246,7 +237,7 @@ spec:
               readOnly: false
         {{- if .Values.eventProxy.enabled }}
         - name: event-proxy
-          image: {{ template "jenkins.event-proxy.image" . }}
+          image: {{ include "common.images.image" (dict "imageRoot" .Values.eventProxy.image "global" .Values.global ) }}
           imagePullPolicy: {{ template "jenkins.event-proxy.pullPolicy" . }}
           command:
             - /bin/event-proxy
