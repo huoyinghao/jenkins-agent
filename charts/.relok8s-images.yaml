@@ -1,5 +1,4 @@
 - "{{ .image.registry }}/{{ .Master.Image }}:{{ .Master.ImageTag }}"
-- "{{ .image.registry }}/{{ .Master.Image }}:{{ .Master.ImageTag }}"
 - "{{ .image.registry }}/{{ .Agent.Image }}:{{ .Agent.ImageTag }}"
 - "{{ .image.registry }}/{{ .Agent.Builder.Base.Image }}:{{ .Agent.Builder.Base.Tag }}-podman"
 - "{{ .image.registry }}/{{ .Agent.Builder.Base.Image }}:{{ .Agent.Builder.Base.Tag }}"
@@ -14,4 +13,4 @@
 - "{{ .image.registry }}/{{ .Agent.Builder.Python.Image }}:{{ .Agent.Builder.Python.Tag }}-podman"
 - "{{ .image.registry }}/{{ .Agent.Builder.Python.Image }}:{{ .Agent.Builder.Python.Tag }}"
 - "{{ .trace.image.registry }}/{{ .trace.image.repository }}:{{ .trace.image.tag }}"
-- "{{ .image.registry }}/{{ .eventProxy.image.repository }}:{{ .eventProxy.image.tag }}"
+- "{{ .eventProxy.image.registry }}/{{ .eventProxy.image.repository }}:{{ .eventProxy.image.tag }}"

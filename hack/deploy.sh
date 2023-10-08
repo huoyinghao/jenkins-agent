@@ -14,7 +14,7 @@ TARGET_NS=${3:-"jenkins"}
 LOCAL_RELEASE_NAME=jenkins
 
 echo "Rendering values.yaml with VERSION=${VERSION}"
-envsubst -i config/e2e.yaml -o /tmp/e2e.yaml
+envsubst < config/e2e.yaml > /tmp/e2e.yaml
 
 values="-f /tmp/e2e.yaml"
 

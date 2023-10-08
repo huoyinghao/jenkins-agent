@@ -25,12 +25,24 @@ jobs:
         id: init_variable
         run: |
           echo container_tag=$(git describe --tags --abbrev=8) >> $GITHUB_OUTPUT
+  
+  manifest-conformace:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Helm
+        uses: azure/setup-helm@v3
+
+      - name: Validate Helm Policy
+        run: |
+          OUTPUT=github make conftest 
+
 
   build-jenkins:
     permissions:
       contents: read
       packages: write
-    needs: init-variable
+    needs: [init-variable, manifest-conformace]
     runs-on: ubuntu-latest
     steps:
       - name: checkout
@@ -63,7 +75,7 @@ jobs:
     permissions:
       contents: read
       packages: write
-    needs: init-variable
+    needs: [init-variable, manifest-conformace]
     runs-on: ubuntu-latest
     steps:
       - name: checkout
@@ -177,8 +189,10 @@ jobs:
       - name: init variables
         id: step-variable
         run: |
-          echo "suffix=$([ ${{ matrix.version }} == 1.8.0 ] && (echo -jdk1.8) || (echo -jdk11) )"
-          echo "suffix=${suffix}$([ ${{ matrix.runtime }} == podman ] && (echo -podman))" >> $GITHUB_OUTPUT
+          export "runtime=$([ ${{ matrix.runtime }} == podman ] && (echo -podman))"
+          export "jdkVersion=$([ ${{ matrix.version }} == 1.8.0 ] && (echo -jdk1.8) || (echo -jdk11) )"
+          echo "runtime=${runtime}" >> $GITHUB_OUTPUT
+          echo "suffix=${jdkVersion}${runtime}" >> $GITHUB_OUTPUT
       - name: use setup-buildx-action
         uses: docker/setup-buildx-action@v2
       - name: build jenkins agent with maven
@@ -195,7 +209,7 @@ jobs:
             ${{ secrets.DOCKER_USERNAME }}/jenkins-agent-maven:latest${{ steps.step-variable.outputs.suffix }}
           build-args: |
             REGISTRY_REPO=${{ secrets.DOCKER_USERNAME }}
-            RUNTIME=${{ steps.step-variable.outputs.suffix }}
+            RUNTIME=${{ steps.step-variable.outputs.runtime }}
             JAVA_VERSION=${{ matrix.version }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
