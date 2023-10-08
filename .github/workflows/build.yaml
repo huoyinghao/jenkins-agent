@@ -28,27 +28,15 @@ jobs:
   
   manifest-conformace:
     runs-on: ubuntu-latest
+    container: openpolicyagent/conftest:latest
     steps:
       - uses: actions/checkout@v3
       - name: Install Helm
         uses: azure/setup-helm@v3
 
-      - name: generate default manifest
+      - name: Validate Kubernetes policy
         run: |
-          helm template jenkins ./charts/ --debug -n jenkins -f test/default-registry/values.yaml > default-registry.yaml
-          helm template jenkins ./charts/ --debug -n jenkins -f test/override-registry/values.yaml > override-registry.yaml
-
-      - name: validate default-registry.yaml
-        uses: instrumenta/conftest-action@master
-        with:
-          files:  default-registry.yaml
-          policy: test/default-registry/
-
-      - name: validate override-registry.yaml
-        uses: instrumenta/conftest-action@master
-        with:
-          files:  override-registry.yaml
-          policy: test/override-registry/
+          OUTPUT=github make conftest 
 
 
   build-jenkins:
@@ -88,7 +76,7 @@ jobs:
     permissions:
       contents: read
       packages: write
-    needs: init-variable
+    needs: [init-variable, manifest-conformace]
     runs-on: ubuntu-latest
     steps:
       - name: checkout

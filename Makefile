@@ -5,6 +5,7 @@ INSTALLATION_NAME ?= "jenkins"
 DEPLOY_ENV ?= ""
 VERSION ?= ""
 FILENAME := ""
+OUTPUT ?= "stdout"
 ifeq ($(VERSION), "")
     LATEST_TAG=$(shell  git describe --tags --abbrev=8)
     ifeq ($(LATEST_TAG),)
@@ -53,10 +54,10 @@ install-conftest:
 .PHONY: conftest
 conftest: install-conftest
 	helm template  jenkins ./charts/ --debug -n jenkins -f test/default-registry/values.yaml > tmp.yaml
-	conftest test --policy test/default-registry/deny.rego tmp.yaml
+	conftest test -o $(OUTPUT) --policy test/default-registry/deny.rego tmp.yaml
 
 	helm template  jenkins ./charts/ --debug -n jenkins -f test/override-registry/values.yaml > tmp.yaml
-	conftest test --policy test/override-registry/deny.rego tmp.yaml
+	conftest test -o $(OUTPUT) --policy test/override-registry/deny.rego tmp.yaml
 
 	rm tmp.yaml
 
