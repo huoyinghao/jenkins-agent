@@ -1,0 +1,8 @@
+global:
+  imageRegistry: my-company.com
+
+trace:
+  enabled: true
+
+eventProxy:
+  enabled: true

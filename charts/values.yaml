@@ -10,13 +10,6 @@ plugins:
   eventDispatcher:
     receiver: ""
 
-trace:
-  enabled: false
-  image:
-    registry: ghcr.io
-    repository: open-telemetry/opentelemetry-operator/autoinstrumentation-java
-    tag: 1.17.0
-
 Master:
   StatefulSet:
     Enabled: false
@@ -350,25 +343,24 @@ Agent:
   # jenkins-agent: v1
 
   Builder:
-    # Registry: "docker.io"
     Base:
       Image: amambadev/jenkins-agent-base
-      Tag: latest
+      ImageTag: latest
     NodeJs16:
       Image: amambadev/jenkins-agent-nodejs
-      Tag: latest
+      ImageTag: latest
     Maven:
       Image: amambadev/jenkins-agent-maven
-      Tag: latest-jdk1.8
+      ImageTag: latest-jdk1.8
     Mavenjdk11:
       Image: amambadev/jenkins-agent-maven
-      Tag: latest-jdk11
+      ImageTag: latest-jdk11
     Golang:
       Image: amambadev/jenkins-agent-go
-      Tag: latest
+      ImageTag: latest
     Python:
       Image: amambadev/jenkins-agent-python
-      Tag: latest
+      ImageTag: latest
     ContainerRuntime: podman # Available values: docker, podman
 
 Persistence:
@@ -425,6 +417,7 @@ prometheus:
 eventProxy:
   enabled: false
   image:
+    registry: release.daocloud.io
     repository: amamba/amamba-event-proxy
     tag: "v0.18.0-alpha.0"
   imagePullPolicy: IfNotPresent
@@ -452,3 +445,9 @@ eventProxy:
     #    cpu: 200m
     #    memory: 200Mi
 
+trace:
+  enabled: false
+  image:
+    registry: ghcr.io
+    repository: open-telemetry/opentelemetry-operator/autoinstrumentation-java
+    tag: 1.17.0
