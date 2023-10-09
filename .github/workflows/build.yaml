@@ -24,8 +24,13 @@ jobs:
       - name: output environment variable
         id: init_variable
         run: |
-          echo container_tag=$(git describe --tags --abbrev=8) >> $GITHUB_OUTPUT
-  
+          set -x
+          VERSION=${GITHUB_REF#refs/tags/}
+          if [[ -z ${VERSION} ]]; then
+            VERSION=$(git describe --tags --abbrev=8)
+          fi
+          echo "container_tag=${VERSION}" >> $GITHUB_OUTPUT
+
   manifest-conformace:
     runs-on: ubuntu-latest
     steps:
