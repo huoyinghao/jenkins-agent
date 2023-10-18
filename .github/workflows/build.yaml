@@ -24,9 +24,15 @@ jobs:
       - name: output environment variable
         id: init_variable
         run: |
-          echo container_tag=$(git describe --tags --abbrev=8) >> $GITHUB_OUTPUT
-  
-  manifest-conformace:
+          set -x
+          if [[ $GITHUB_REF =~ ^refs/tags/v ]]; then
+            VERSION=${GITHUB_REF#refs/tags/}
+          else
+            VERSION=$(git describe --tags --abbrev=8)
+          fi
+          echo "container_tag=${VERSION}" >> $GITHUB_OUTPUT
+
+  manifest-conformance:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -42,7 +48,7 @@ jobs:
     permissions:
       contents: read
       packages: write
-    needs: [init-variable, manifest-conformace]
+    needs: [init-variable, manifest-conformance]
     runs-on: ubuntu-latest
     steps:
       - name: checkout
@@ -75,7 +81,7 @@ jobs:
     permissions:
       contents: read
       packages: write
-    needs: [init-variable, manifest-conformace]
+    needs: [init-variable, manifest-conformance]
     runs-on: ubuntu-latest
     steps:
       - name: checkout
@@ -284,5 +290,5 @@ jobs:
           cd amamba-charts/
           git add docs/
           chart_version=${{ steps.get_version.outputs.VERSION }}
-          git commit -m "update vela-core chart ${chart_version}"
+          git commit -m "update jenkins chart ${chart_version}"
           git push https://x-access-token:${{ steps.get_app_token.outputs.token }}@github.com/amamba-io/charts.git
