@@ -155,7 +155,7 @@ jobs:
           echo "context=./jenkins-agent/${{ matrix.agent }}/" >> $GITHUB_OUTPUT
       - name: use setup-buildx-action
         uses: docker/setup-buildx-action@v2
-      - name: build jenkins agent with golang
+      - name: build jenkins agent with ${{ matrix.agent }}
         uses: docker/build-push-action@v4.1.1
         with:
           context: ${{ steps.step-variable.outputs.context }}
