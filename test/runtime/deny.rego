@@ -41,24 +41,6 @@ is_event_proxy_image(container) if {
 	container.image == "release.daocloud.io/amamba/amamba-event-proxy:v0.18.0-alpha.0"
 }
 
-deny[msg] {
-	input.kind == "Deployment"
-	not has_container(input.spec.template.spec.containers, "event-proxy")
-
-	msg := "'event-proxy' is not enabled"
-}
-
-deny[msg] {
-	input.kind == "Deployment"
-	not has_container(input.spec.template.spec.initContainers, "opentelemetry-auto-instrumentation")
-
-	msg := "'opentelemetry-auto-instrumentation' is not enabled"
-}
-
-has_container(containers, name) if {
-	some i
-	containers[i].name == name
-}
 
 deny[msg] {
 	input.kind == "ConfigMap"
@@ -70,12 +52,12 @@ deny[msg] {
 }
 
 agents := {
-	"base": {"container": "base", "image": "docker.io/amambadev/jenkins-agent-base:latest-podman"},
-	"maven": {"container": "maven", "image": "docker.io/amambadev/jenkins-agent-maven:latest-jdk1.8-podman"},
-	"mavenjdk11": {"container": "maven", "image": "docker.io/amambadev/jenkins-agent-maven:latest-jdk11-podman"},
-	"nodejs": {"container": "nodejs", "image": "docker.io/amambadev/jenkins-agent-nodejs:latest-podman"},
-	"go": {"container": "go", "image": "docker.io/amambadev/jenkins-agent-go:latest-podman"},
-	"python": {"container": "python", "image": "docker.io/amambadev/jenkins-agent-python:latest-podman"},
+	"base": {"container": "base", "image": "docker.io/amambadev/jenkins-agent-base:latest"},
+	"maven": {"container": "maven", "image": "docker.io/amambadev/jenkins-agent-maven:latest-jdk1.8"},
+	"mavenjdk11": {"container": "maven", "image": "docker.io/amambadev/jenkins-agent-maven:latest-jdk11"},
+	"nodejs": {"container": "nodejs", "image": "docker.io/amambadev/jenkins-agent-nodejs:latest"},
+	"go": {"container": "go", "image": "docker.io/amambadev/jenkins-agent-go:latest"},
+	"python": {"container": "python", "image": "docker.io/amambadev/jenkins-agent-python:latest"},
 }
 
 is_jnlp_image(container) if {

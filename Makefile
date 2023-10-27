@@ -59,6 +59,9 @@ conftest: install-conftest
 	helm template  jenkins ./charts/ --debug -n jenkins -f test/override-registry/values.yaml > tmp.yaml
 	conftest test -o $(OUTPUT) --policy test/override-registry/deny.rego tmp.yaml
 
+	helm template  jenkins ./charts/ --debug -n jenkins -f test/runtime/values.yaml > tmp.yaml
+	conftest test -o $(OUTPUT) --policy test/runtime/deny.rego tmp.yaml
+
 	rm tmp.yaml
 
 .PHONY: install-opa
