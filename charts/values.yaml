@@ -66,7 +66,7 @@ Master:
     JenkinsHost: ""
   ServicePort: 80
   ServiceType: ClusterIP
-  NodePort: 31767
+  NodePort:
   ServiceAnnotations: {}
   Casc:
     # Maximum number of parallel pipelines
