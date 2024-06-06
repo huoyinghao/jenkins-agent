@@ -75,10 +75,6 @@ plugins:
     source:
       version: 1.27.4
   - groupId: io.jenkins.blueocean
-    artifactId: blueocean-jira
-    source:
-      version: 1.27.4
-  - groupId: io.jenkins.blueocean
     artifactId: blueocean-personalization
     source:
       version: 1.27.4
@@ -230,10 +226,6 @@ plugins:
     artifactId: htmlpublisher
     source:
       version: 1.31
-  - groupId: org.jenkins-ci.plugins
-    artifactId: jira
-    source:
-      version: 3.10
   - groupId: org.jenkins-ci.plugins
     artifactId: localization-zh-cn
     source:
