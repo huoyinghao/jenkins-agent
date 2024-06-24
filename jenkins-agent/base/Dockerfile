@@ -34,7 +34,8 @@ RUN yum -y install unzip && \
 ENV EXCLUDE_DOCKER 0
 
 COPY ./ ./
-RUN chmod +x ./hack/install_utils.sh && ./hack/install_utils.sh && rm -rf ./*
+
+RUN chmod +x ./hack/install_utils.sh && ./hack/install_utils.sh && chmod +x ./hack/install_qemu.sh && ./hack/install_qemu.sh
 RUN sed -i '1 a JAVA_HOME=/opt/java-11.0.14' /opt/sonar-scanner-${SONAR_SCANNER_VERSION}/bin/sonar-scanner
 RUN sonar-scanner --version
 CMD ["docker","version"]
