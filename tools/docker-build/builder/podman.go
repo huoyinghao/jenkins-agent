@@ -26,7 +26,7 @@ func (p *Podman) WithArgs(a Args) runtime {
 
 func (p *Podman) Build() error {
 	var (
-		options = []string{"build"}
+		options = []string{"build", "--network=host"}
 		targets = []string{}
 	)
 
