@@ -31,7 +31,7 @@ func TestPodman_Build(t *testing.T) {
 				WorkingDir:  "test/",
 			},
 			want: []string{
-				"podman build -f Dockerfile.test --no-cache --build-arg key1=val1,key2=val2 --tag test:v1.0 --tag test:latest --tag test:v1.0-dev test/",
+				"podman build --network=host -f Dockerfile.test --no-cache --build-arg key1=val1,key2=val2 --tag test:v1.0 --tag test:latest --tag test:v1.0-dev test/",
 			},
 		},
 		{
@@ -43,7 +43,7 @@ func TestPodman_Build(t *testing.T) {
 				Platform:    "linux/amd64,linux/arm64",
 			},
 			want: []string{
-				"podman build --platform linux/amd64,linux/arm64 --manifest test:v1.0 .",
+				"podman build --network=host --platform linux/amd64,linux/arm64 --manifest test:v1.0 .",
 			},
 		},
 		{
@@ -54,7 +54,7 @@ func TestPodman_Build(t *testing.T) {
 				Tags:      []string{"latest", "v1.0-dev"},
 			},
 			want: []string{
-				"podman build --tag test:v1.0 --tag test:latest --tag test:v1.0-dev .",
+				"podman build --network=host --tag test:v1.0 --tag test:latest --tag test:v1.0-dev .",
 				"podman login --username admin --password password test",
 				"podman push test:v1.0",
 				"podman push test:latest",
@@ -70,7 +70,7 @@ func TestPodman_Build(t *testing.T) {
 				Platform:  "linux/amd64,linux/arm64",
 			},
 			want: []string{
-				"podman build --platform linux/amd64,linux/arm64 --manifest test:v1.0 .",
+				"podman build --network=host --platform linux/amd64,linux/arm64 --manifest test:v1.0 .",
 				"podman login --username admin --password password test",
 				"podman manifest push --all test:v1.0",
 			},

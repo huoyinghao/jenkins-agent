@@ -39,7 +39,7 @@ func main() {
 		fmt.Printf("%s: %v", err, args)
 		os.Exit(1)
 	}
-	fmt.Printf("Run with args: %#v", args)
+	fmt.Printf("Run with args: %#v\n", args)
 	err = builder.Runtime().WithArgs(args).Build()
 	if err != nil {
 		fmt.Printf("%s", err)
