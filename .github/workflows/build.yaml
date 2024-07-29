@@ -97,7 +97,7 @@ jobs:
       - name: build jenkins agent with docker
         uses: docker/build-push-action@v4.1.1
         with:
-          context: ./jenkins-agent/base
+          context: .
           file: ./jenkins-agent/base/Dockerfile
           github-token: ${{ secrets.GITHUB_TOKEN }}
           push: true
@@ -111,7 +111,7 @@ jobs:
       - name: build jenkins agent with podman
         uses: docker/build-push-action@v4.1.1
         with:
-          context: ./jenkins-agent/base
+          context: .
           file: ./jenkins-agent/base/podman/Dockerfile
           github-token: ${{ secrets.GITHUB_TOKEN }}
           push: true
