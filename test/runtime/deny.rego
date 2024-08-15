@@ -52,12 +52,11 @@ deny[msg] {
 }
 
 agents := {
-	"base": {"container": "base", "image": "docker.io/amambadev/jenkins-agent-base:latest"},
-	"maven": {"container": "maven", "image": "docker.io/amambadev/jenkins-agent-maven:latest-jdk1.8"},
-	"mavenjdk11": {"container": "maven", "image": "docker.io/amambadev/jenkins-agent-maven:latest-jdk11"},
-	"nodejs": {"container": "nodejs", "image": "docker.io/amambadev/jenkins-agent-nodejs:latest"},
-	"go": {"container": "go", "image": "docker.io/amambadev/jenkins-agent-go:latest"},
-	"python": {"container": "python", "image": "docker.io/amambadev/jenkins-agent-python:latest"},
+	"base": {"container": "base", "image": "docker.io/amambadev/jenkins-agent-base:latest-*"},
+	"maven": {"container": "maven", "image": "docker.io/amambadev/jenkins-agent-maven:latest-*"},
+	"nodejs": {"container": "nodejs", "image": "docker.io/amambadev/jenkins-agent-nodejs:latest-*"},
+	"go": {"container": "go", "image": "docker.io/amambadev/jenkins-agent-go:latest-*"},
+	"python": {"container": "python", "image": "docker.io/amambadev/jenkins-agent-python:latest-*"},
 }
 
 is_jnlp_image(container) if {
@@ -68,7 +67,7 @@ is_jnlp_image(container) if {
 is_agent_image(container) if {
 	some name
 	agents[name].container == container.name
-	agents[name].image == container.image
+	re_match(agents[name].image, container.image)
 }
 
 find_unknown_images(container) := msg if {
