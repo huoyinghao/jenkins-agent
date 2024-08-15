@@ -1,11 +1,8 @@
 ARG RUNTIME
 ARG REGISTRY_REPO
 FROM $REGISTRY_REPO/jenkins-agent-base:latest$RUNTIME
-
-RUN yum -y groupinstall 'Development Tools'  && yum -y clean all --enablerepo='*'
-
-ENV GOLANG_VERSION 1.17.13
-
+ARG VERSION
+ENV GO_VERSION=$VERSION
 ENV PATH $PATH:/usr/local/go/bin
 ENV PATH $PATH:/usr/local/
 ENV GOROOT /usr/local/go

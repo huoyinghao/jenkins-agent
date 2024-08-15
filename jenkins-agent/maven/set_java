@@ -5,10 +5,19 @@ ARCH=$(uname -m)
 echo $ARCH
 
 if [[ ${ARCH} == 'x86_64' ]]; then
-  JAVA_32=$(alternatives --display java | grep family | grep i386 | cut -d' ' -f1)
-  alternatives --set java ${JAVA_32}
-  JAVAC_32=$(alternatives --display javac | grep family | grep i386 | cut -d' ' -f1)
+  JAVA_32=$(update-alternatives --display java | grep family | grep i386 | cut -d' ' -f1)
+  if [[ -n "${JAVA_32}" ]]; then
+    update-alternatives --set java ${JAVA_32}
+  else
+    echo "No 32-bit Java alternative found."
+  fi
+
   # Maven actually uses javac, not java
-  alternatives --set javac ${JAVAC_32}
+  JAVAC_32=$(update-alternatives --display javac | grep family | grep i386 | cut -d' ' -f1)
+  if [[ -n "${JAVAC_32}" ]]; then
+    update-alternatives --set javac ${JAVAC_32}
+  else
+    echo "No 32-bit Javac alternative found."
+  fi
   exit $?
 fi

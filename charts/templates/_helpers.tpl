@@ -182,3 +182,18 @@ rateLimiterConfig: {{ toYaml .rateLimiterConfig | nindent 2 }}
 {{- define "charts.version" -}}
     {{- printf .Chart.Version |replace "+" "-" -}}
 {{- end -}}
+
+{{- define "language.images" -}}
+{{- $language := .language -}}
+{{- $builder := .builder -}}
+{{- $root := .root -}}
+{{- range $version := $builder.Versions -}}
+  {{- $updatedBuilder := set $builder "ImageTag" $version }}
+- name: "{{ $language }}-{{ $version | regexFind "[^-]+$" }}"
+  label: "{{ $language }}-{{ $version | regexFind "[^-]+$" }}"
+  inheritFrom: "{{ $language }}"
+  containers:
+  - name: "{{ $language }}"
+    image: "{{ include "builder.image" (dict "builder" $updatedBuilder "root" $root) }}"
+{{- end -}}
+{{- end -}}
