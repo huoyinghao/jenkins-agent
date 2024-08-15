@@ -5,7 +5,9 @@ COPY ./ ./
 ARG VERSION
 ENV NODE_VERSION $VERSION
 
-RUN curl -fsSL https://rpm.nodesource.com/setup_16.x | bash -
-RUN yum install nodejs-${VERSION} -y && yum clean all && rm -rf /var/cache/yum
+RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash - && \
+    apt-get install -y nodejs && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 RUN node -v
 RUN npm -v
