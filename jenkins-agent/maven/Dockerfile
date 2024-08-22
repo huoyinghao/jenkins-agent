@@ -8,7 +8,7 @@ RUN yum install -y java-${JAVA_VERSION}-openjdk-devel \
     java-${JAVA_VERSION}-openjdk-devel.i686
 
 # maven
-ENV MAVEN_VERSION 3.5.3
+ENV MAVEN_VERSION 3.9.9
 RUN cd /opt && wget https://archive.apache.org/dist/maven/maven-3/3.5.3/binaries/apache-maven-3.5.3-bin.tar.gz && tar -xvf apache-maven-3.5.3-bin.tar.gz && rm -rf apache-maven-3.5.3-bin.tar.gz
 ENV M2_HOME /opt/apache-maven-$MAVEN_VERSION
 ENV JAVA_HOME /usr/lib/jvm/java-${JAVA_VERSION}-openjdk
@@ -22,7 +22,7 @@ ENV PATH $M2:$PATH:$JAVA_HOME/bin
 #RUN mv apache-ant-${ANT_VERSION} /opt/ant
 #ENV ANT_HOME /opt/ant
 #ENV PATH ${PATH}:/opt/ant/bin
-RUN rm -rf /opt/java-11.0.14 /opt/sonar-scanner-4.8.0.2856 && yum clean all && rm -rf /var/cache/yum
+RUN rm -rf /opt/java-11.0.14 /opt/sonar-scanner-4.8.0.2856
 
 # Set JDK to be 32bit
 COPY set_java $M2

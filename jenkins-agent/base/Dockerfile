@@ -7,19 +7,40 @@ COPY go.mod go.sum ./
 
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=$TARGETARCH go build -o docker-build ./tools/docker-build
 
-FROM centos:7
+FROM oraclelinux:9
+
+RUN yum install -y  \
+        make \
+        yum-utils \
+        gcc \
+        gcc-c++ \
+        libcurl-devel \
+        openssl-devel \
+        wget \
+        git \
+        curl \
+        autoconf \
+        zip \
+        unzip \
+        jq \
+        glibc-locale-source \
+        glibc-langpack-en \
+        glibc-common \
+        vim \
+        gettext
+
 
 # CentOS 7 is EOL, replace the mirror
-RUN sed -i s/mirror.centos.org/vault.centos.org/g /etc/yum.repos.d/*.repo && \
-    sed -i s/^#.*baseurl=http/baseurl=http/g /etc/yum.repos.d/*.repo && \
-    sed -i s/^mirrorlist=http/#mirrorlist=http/g /etc/yum.repos.d/*.repo && \
-    echo "sslverify=false" >> /etc/yum.conf && \
-    yum makecache
+#RUN sed -i s/mirror.centos.org/vault.centos.org/g /etc/yum.repos.d/*.repo && \
+#    sed -i s/^#.*baseurl=http/baseurl=http/g /etc/yum.repos.d/*.repo && \
+#    sed -i s/^mirrorlist=http/#mirrorlist=http/g /etc/yum.repos.d/*.repo && \
+#    echo "sslverify=false" >> /etc/yum.conf && \
+#    yum makecache
 
-RUN yum install -y epel-release ca-certificates && \
-    yum install -y make wget git gcc gcc-c++ curl-devel autoconf openssl-devel && \
-    yum -y clean all --enablerepo='*' && \
-    yum update -y
+#RUN yum install -y epel-release ca-certificates && \
+#    yum install -y make wget git gcc gcc-c++ curl-devel autoconf openssl-devel && \
+#    yum -y clean all --enablerepo='*' && \
+#    yum update -y
 
 # make Used to compile binary
 # wget Compressed package for downloading related components
@@ -35,6 +56,7 @@ RUN yum install -y epel-release ca-certificates && \
 RUN localedef -i en_US -f UTF-8 en_US.UTF-8
 ENV LANG=en_US.UTF-8 LANGUAGE=en_US:en LC_ALL=en_US.UTF-8 \
     EXCLUDE_DOCKER=0
+
 
 # USER jenkins
 WORKDIR /home/jenkins

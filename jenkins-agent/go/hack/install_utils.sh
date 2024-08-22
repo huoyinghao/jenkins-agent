@@ -22,3 +22,5 @@ else
   echo "do not support this arch"
   exit 1
 fi
+
+go version

@@ -102,7 +102,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           push: true
           provenance: false
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/jenkins-agent-base:${{ needs.init-variable.outputs.container_tag }}
             ${{ secrets.DOCKER_USERNAME }}/jenkins-agent-base:latest
@@ -116,7 +116,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           push: true
           provenance: false
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/jenkins-agent-base:${{ needs.init-variable.outputs.container_tag }}-podman
             ${{ secrets.DOCKER_USERNAME }}/jenkins-agent-base:latest-podman
@@ -161,7 +161,7 @@ jobs:
           push: true
           provenance: false
           platforms: linux/amd64,linux/arm64
-          # In the format of "amambadev/jenkins-agent-go:v0.2.1-podman"   
+          # In the format of "amambadev/jenkins-agent-go:v0.2.1-podman"
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/${{ steps.step-variable.outputs.image }}:${{ needs.init-variable.outputs.container_tag }}${{ steps.step-variable.outputs.suffix }}
             ${{ secrets.DOCKER_USERNAME }}/${{ steps.step-variable.outputs.image }}:latest${{ steps.step-variable.outputs.suffix }}
