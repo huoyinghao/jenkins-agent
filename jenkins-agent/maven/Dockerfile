@@ -2,36 +2,22 @@ ARG RUNTIME
 ARG REGISTRY_REPO
 FROM $REGISTRY_REPO/jenkins-agent-base:latest$RUNTIME
 
-# java
-ARG JAVA_VERSION
+COPY jenkins-agent/base/ ./
 
-RUN apt-get update && \
-    apt-get install -y openjdk-${JAVA_VERSION}-jdk && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+ARG JAVA_VERSION
+# install java and maven
+RUN ansible-playbook ./ansible/install_packages.yaml -vvv -e java_version=$JAVA_VERSION
 
 # maven
 ENV MAVEN_VERSION 3.9.9
-RUN cd /opt && wget https://archive.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz &&  \
-    tar -xvf apache-maven-${MAVEN_VERSION}-bin.tar.gz &&  \
-    rm -rf apache-maven-${MAVEN_VERSION}-bin.tar.gz
 ENV M2_HOME /opt/apache-maven-$MAVEN_VERSION
 ENV JAVA_HOME /usr/lib/jvm/java-${JAVA_VERSION}-openjdk
 ENV maven.home $M2_HOME
 ENV M2 $M2_HOME/bin
 ENV PATH $M2:$PATH:$JAVA_HOME/bin
 
-# ant
-#ENV ANT_VERSION 1.10.7
-#COPY --from=build /binaryfile/apache-ant-1.10.7 ./apache-ant-1.10.7
-#RUN mv apache-ant-${ANT_VERSION} /opt/ant
-#ENV ANT_HOME /opt/ant
-#ENV PATH ${PATH}:/opt/ant/bin
-RUN rm -rf /opt/java-11.0.14 /opt/sonar-scanner-4.8.0.2856 && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
 # Set JDK to be 32bit
-COPY set_java $M2
+COPY jenkins-agent/maven/set_java $M2
 RUN chmod +x $M2/set_java && $M2/set_java && rm $M2/set_java
 
 CMD ["mvn","-version"]

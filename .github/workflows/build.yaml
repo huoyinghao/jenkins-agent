@@ -152,7 +152,7 @@ jobs:
       - name: build jenkins agent with nodejs
         uses: docker/build-push-action@v4.1.1
         with:
-          context: ./jenkins-agent/nodejs
+          context: .
           file: ./jenkins-agent/nodejs/Dockerfile
           github-token: ${{ secrets.GITHUB_TOKEN }}
           push: true
@@ -195,7 +195,7 @@ jobs:
       - name: build jenkins agent with python
         uses: docker/build-push-action@v4.1.1
         with:
-          context: ./jenkins-agent/python
+          context: .
           file: ./jenkins-agent/python/Dockerfile
           github-token: ${{ secrets.GITHUB_TOKEN }}
           push: true
@@ -238,7 +238,7 @@ jobs:
         - name: build jenkins agent with go
           uses: docker/build-push-action@v4.1.1
           with:
-            context: ./jenkins-agent/go
+            context: .
             file: ./jenkins-agent/go/Dockerfile
             github-token: ${{ secrets.GITHUB_TOKEN }}
             push: true
@@ -281,7 +281,7 @@ jobs:
       - name: build jenkins agent with maven
         uses: docker/build-push-action@v4.1.1
         with:
-          context: ./jenkins-agent/maven
+          context: .
           file: ./jenkins-agent/maven/Dockerfile
           github-token: ${{ secrets.GITHUB_TOKEN }}
           push: true
@@ -330,11 +330,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
+        with:
+          fetch-depth: 0
       - name: Install Helm
         uses: azure/setup-helm@v3
-      - name: Install yq
-        uses: chrisdickinson/setup-yq@latest
       - name: Get the version
         id: get_version
         run: |
