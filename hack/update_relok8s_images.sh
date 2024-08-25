@@ -5,6 +5,8 @@ set -o pipefail
 
 # this script used for updating the .relok8s-images.yaml file with the images from the values.yaml file
 
+wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64.tar.gz -O - | tar xz &&  yq --version
+
 values_file=${values_file:-"charts/values.yaml"}
 relok8s_file=${relok8s_file:-"charts/.relok8s-images.yaml"}
 

@@ -1,18 +1,12 @@
 ARG RUNTIME
 ARG REGISTRY_REPO
 FROM $REGISTRY_REPO/jenkins-agent-base:latest$RUNTIME
-COPY ./ ./
+COPY jenkins-agent/base/ ./
 ARG VERSION
-ENV NODE_VERSION=$VERSION
-
-RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | bash
 
 ENV NVM_DIR /root/.nvm
-ENV SHIPPABLE_NODE_VERSION=$NODE_VERSION
-ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
-RUN . "$NVM_DIR/nvm.sh" && \
-        nvm install $NODE_VERSION && \
-        nvm alias default $NODE_VERSION && \
-        nvm use default
+ENV SHIPPABLE_NODE_VERSION=$VERSION
+ENV PATH $NVM_DIR/versions/node/v$VERSION/bin:$PATH
 
-RUN node -v && npm -v
+RUN ansible-playbook ./ansible/install_packages.yaml -e node_version=$VERSION -vvv
+CMD ["node","--version"]
