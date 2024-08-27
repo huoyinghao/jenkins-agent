@@ -1,0 +1,43 @@
+- name: Install Java 8 or 11
+  yum:
+    name:
+      - java-{{ java_version }}-openjdk-devel
+    state: present
+  when: java_version is defined and (java_version == "11" or java_version == "1.8.0")
+  retries: 3
+  delay: 5
+
+- name: Check if java-openjdk-devel.i686 is available
+  command: yum list available java-{{ java_version }}-openjdk-devel.i686
+  register: java_i686_check
+  ignore_errors: yes
+  retries: 3
+  delay: 5
+  when: java_version is defined and (java_version == "11" or java_version == "1.8.0")
+
+- name: Install java-openjdk-devel.i686 if available
+  yum:
+    name: java-{{ java_version }}-openjdk-devel.i686
+    state: present
+  when: java_i686_check.rc == 0 and java_version is defined and (java_version == "11" or java_version == "1.8.0")
+  retries: 3
+  delay: 5
+  ignore_errors: yes
+
+- name: Install Java higher than 11
+  shell: |
+    wget https://download.oracle.com/java/{{ java_version }}/latest/jdk-{{ java_version }}_linux-{{ arch_x64 or arch_aarch64 }}_bin.rpm
+    yum -y install ./jdk-{{ java_version }}_linux-{{ arch_x64 or arch_aarch64 }}_bin.rpm
+  when: java_version is defined and (java_version != "11" and java_version != "1.8.0")
+  retries: 3
+  delay: 5
+- name: Install Maven
+  shell: |
+    cd /opt && wget https://archive.apache.org/dist/maven/maven-3/{{ maven_version }}/binaries/apache-maven-{{ maven_version }}-bin.tar.gz &&  \
+    tar -xvf apache-maven-{{ maven_version }}-bin.tar.gz &&  \
+    rm -rf apache-maven-{{ maven_version }}-bin.tar.gz && \
+    rm -rf /opt/java-{{ jdk_11_version_dir }} /opt/sonar-scanner-{{ sonar_scanner_version }}
+  when: java_version is defined and java_version != ""
+  retries: 3
+  delay: 5
+

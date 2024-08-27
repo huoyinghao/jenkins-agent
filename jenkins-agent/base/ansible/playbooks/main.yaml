@@ -1,0 +1,48 @@
+- name: Install required software based on system
+  hosts: localhost
+  become: true
+  vars:
+    docker_version: "27.1.2"
+    helm_version: "3.15.4"
+    argocd_cli_version: "v2.12.1"
+    argo_rollouts_cli_version: "v1.7.2"
+    yq_version: "v4.44.3"
+    jdk_11_version: "11.0.14.9.1"
+    sonar_scanner_version: "4.8.0.2856"
+    maven_version: "3.9.9"
+  tasks:
+    - name: Debug Info
+      debug:
+        msg: "Distribution: {{ distribution }}"
+
+    - name: Set Default
+      set_fact:
+          distribution: "centos"
+      when: distribution is not defined or distribution == ""
+
+    - name: Detect system architecture
+      command: uname -m
+      register: arch_output
+      changed_when: false
+
+    - name: Set architecture variables
+      set_fact:
+        arch_x86_64: "{{ 'x86_64' if arch_output.stdout == 'x86_64' else '' }}"
+        arch_x64: "{{ 'x64' if arch_output.stdout == 'x86_64' else '' }}"
+        arch_amd64: "{{ 'amd64' if arch_output.stdout == 'x86_64' else '' }}"
+        arch_aarch64: "{{ 'aarch64' if arch_output.stdout == 'aarch64' else '' }}"
+        arch_arm64: "{{ 'arm64' if arch_output.stdout == 'aarch64' else '' }}"
+        jdk_11_version_dir: "{{ jdk_11_version.split('.')[0:3] | join('.') }}"
+
+    - name: Include tasks based on system
+      include_tasks: "{{ item }}"
+      with_items:
+        - ./{{ distribution }}.yaml
+        - ./tasks/common.yaml
+        - ./tasks/{{ distribution }}/maven.yaml
+        - ./tasks/{{ distribution }}/python.yaml
+        - ./tasks/{{ distribution }}/podman.yaml
+
+
+
+

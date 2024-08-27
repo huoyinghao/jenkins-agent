@@ -1,0 +1,41 @@
+FROM --platform=$BUILDPLATFORM golang:1.22.2 AS build
+
+ENV GO111MODULE=on
+WORKDIR /app
+COPY ./tools ./tools
+COPY go.mod go.sum ./
+
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=$TARGETARCH go build -o docker-build ./tools/docker-build
+
+FROM ubuntu:24.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=Asia/Shanghai
+ENV PATH=/opt/sonar-scanner/bin:$PATH
+# for ansible
+ENV PATH=$PATH:/root/.local/bin
+
+COPY jenkins-agent/base/ ./
+
+RUN apt-get update && \
+    apt-get install -y software-properties-common pipx && \
+    pipx ensurepath && \
+    pipx install --include-deps ansible && \
+    pwd && ls -a
+
+RUN ansible-playbook ./ansible/playbooks/main.yaml -vvv -e required=true -e distribution=ubuntu
+
+RUN chmod +x ./hack/install_qemu.sh && ./hack/install_qemu.sh
+
+# https://github.com/CentOS/sig-cloud-instance-images/issues/71
+RUN locale-gen en_US.UTF-8 && localedef -i en_US -f UTF-8 en_US.UTF-8
+ENV LANG=en_US.UTF-8
+ENV LANGUAGE=en_US:en
+ENV LC_ALL=en_US.UTF-8
+
+# USER jenkins
+# WORKDIR /home/jenkins
+
+COPY --from=build /app/docker-build  /bin/
+
+CMD ["docker","version"]

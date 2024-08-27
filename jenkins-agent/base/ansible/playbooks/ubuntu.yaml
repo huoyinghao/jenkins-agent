@@ -1,0 +1,23 @@
+- name: Update apt cache
+  apt:
+    update_cache: yes
+
+- name: Install required packages
+  apt:
+    name:
+      - make
+      - build-essential
+      - libcurl4-openssl-dev
+      - libssl-dev
+      - wget
+      - git
+      - curl
+      - autoconf
+      - zip
+      - unzip
+      - jq
+      - locales
+      - vim
+      - gettext
+      - tree
+    state: present

@@ -1,12 +1,18 @@
 ARG RUNTIME
 ARG REGISTRY_REPO
-FROM $REGISTRY_REPO/jenkins-agent-base:latest$RUNTIME
-COPY jenkins-agent/base/ ./
+ARG DISTRIBUTION
+ARG DISTRIBUTION_SUFFIX
+FROM $REGISTRY_REPO/jenkins-agent-base:latest$DISTRIBUTION_SUFFIX$RUNTIME
+
+ARG DISTRIBUTION
+ARG DISTRIBUTION_SUFFIX
 ARG VERSION
 
 ENV NVM_DIR /root/.nvm
 ENV SHIPPABLE_NODE_VERSION=$VERSION
 ENV PATH $NVM_DIR/versions/node/v$VERSION/bin:$PATH
 
-RUN ansible-playbook ./ansible/install_packages.yaml -e node_version=$VERSION -vvv
+COPY jenkins-agent/base/ ./
+
+RUN ansible-playbook ./ansible/playbooks/main.yaml -vvv -e node_version=$VERSION -e distribution=$DISTRIBUTION
 CMD ["node","--version"]

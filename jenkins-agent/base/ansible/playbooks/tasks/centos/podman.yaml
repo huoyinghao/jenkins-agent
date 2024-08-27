@@ -1,0 +1,20 @@
+- name: Install Podman
+  yum:
+    name: podman
+    state: present
+  when: install_podman is defined and install_podman | bool
+
+- name: Remove Docker if it exists
+  file:
+    path: /usr/bin/docker
+    state: absent
+  when: install_podman is defined and install_podman | bool
+  retries: 3
+  delay: 5
+
+- name: Create symbolic link from Podman to Docker
+  file:
+    src: /usr/bin/podman
+    dest: /usr/bin/docker
+    state: link
+  when: install_podman is defined and install_podman | bool
