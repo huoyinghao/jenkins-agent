@@ -1,12 +1,17 @@
 ARG RUNTIME
 ARG REGISTRY_REPO
-FROM $REGISTRY_REPO/jenkins-agent-base:latest$RUNTIME
+ARG DISTRIBUTION
+ARG DISTRIBUTION_SUFFIX
+FROM $REGISTRY_REPO/jenkins-agent-base:latest$DISTRIBUTION_SUFFIX$RUNTIME
+
+ARG DISTRIBUTION
+ARG DISTRIBUTION_SUFFIX
+ARG JAVA_VERSION
 
 COPY jenkins-agent/base/ ./
 
-ARG JAVA_VERSION
 # install java and maven
-RUN ansible-playbook ./ansible/install_packages.yaml -vvv -e java_version=$JAVA_VERSION
+RUN ansible-playbook ./ansible/playbooks/main.yaml -vvv -e java_version=$JAVA_VERSION -e distribution=$DISTRIBUTION
 
 # maven
 ENV MAVEN_VERSION 3.9.9

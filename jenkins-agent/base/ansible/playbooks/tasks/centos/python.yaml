@@ -1,0 +1,43 @@
+- name: Install required development tools
+  yum:
+    name:
+      - zlib-devel
+      - bzip2-devel
+      - libffi-devel
+      - wget
+      - ncurses-devel
+      - sqlite-devel
+      - readline-devel
+      - tk-devel
+    state: present
+    update_cache: yes
+  when: python_version is defined and python_version != ""
+  retries: 3
+  delay: 5
+
+- name: Install Python from source
+  shell: |
+    wget https://www.python.org/ftp/python/{{ python_version }}/Python-{{ python_version }}.tgz && \
+    tar xvf Python-{{ python_version }}.tgz && \
+    cd Python-{{ python_version }} && \
+    ./configure && \
+    make clean && \
+    make -j 8 && \
+    make install && \
+    rm -rf /usr/local/bin/python && \
+    mv /usr/local/bin/${PYTHON_VERSION} /usr/local/bin/python && \
+    cd .. && \
+    rm -rf Python-{{ python_version }} && \
+    rm Python-{{ python_version }}.tgz && \
+    python --version
+  when: python_version is defined and python_version != ""
+  retries: 3
+  delay: 5
+
+- name: Install Python PIP
+  yum:
+    name: python3-pip
+    state: present
+  when: python_version is defined and python_version != ""
+  retries: 3
+  delay: 5

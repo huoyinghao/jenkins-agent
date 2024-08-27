@@ -1,0 +1,24 @@
+- name: Update yum cache
+  yum:
+    update_cache: yes
+
+- name: Install required packages
+  yum:
+    name:
+      - make
+      - gcc
+      - gcc-c++
+      - curl-devel
+      - openssl-devel
+      - wget
+      - git
+      - curl
+      - autoconf
+      - zip
+      - unzip
+      - jq
+      - glibc-common
+      - vim
+      - gettext
+      - tree
+    state: present
