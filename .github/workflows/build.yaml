@@ -73,7 +73,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           push: true
           provenance: false
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64, linux/arm64
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/jenkins:${{ needs.init-variable.outputs.container_tag }}-2.413
             ${{ secrets.DOCKER_USERNAME }}/jenkins:latest
@@ -114,7 +114,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           push: true
           provenance: false
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64, linux/arm64
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/jenkins-agent-base:${{ needs.init-variable.outputs.container_tag }}${{ steps.step-variable.outputs.distribution }}
             ${{ secrets.DOCKER_USERNAME }}/jenkins-agent-base:latest${{ steps.step-variable.outputs.distribution }}
@@ -128,7 +128,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           push: true
           provenance: false
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64, linux/arm64
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/jenkins-agent-base:${{ needs.init-variable.outputs.container_tag }}${{ steps.step-variable.outputs.distribution }}-podman
             ${{ secrets.DOCKER_USERNAME }}/jenkins-agent-base:latest${{ steps.step-variable.outputs.distribution }}-podman
@@ -139,42 +139,43 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+
+  build-deprected-agent-centos:
+    needs: [ build-jenkins-agent-base, init-variable ]
+    uses: ./.github/workflows/build_centos.yaml
+    secrets: inherit
+    with:
+      container_tag: ${{ needs.init-variable.outputs.container_tag }}
+
   build-agent-nodejs:
     needs: [build-jenkins-agent-base, init-variable]
     strategy:
       matrix:
         runtime: [docker, podman]
         version: ["16.17.0", "18.20.4", "20.16.0"]
-        os: ["centos","ubuntu"]
     runs-on: ubuntu-latest
+    env:
+      os: ubuntu
     steps:
       - name: checkout
-        if: ${{ !(matrix.os == 'centos' && matrix.version != '16.17.0') }}
         uses: actions/checkout@v4
       - name: Set up QEMU
-        if: ${{ !(matrix.os == 'centos' && matrix.version != '16.17.0') }}
         uses: docker/setup-qemu-action@v3
       - name: Login to ghcr.io
-        if: ${{ !(matrix.os == 'centos' && matrix.version != '16.17.0') }}
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: init variables
         id: step-variable
-        if: ${{ !(matrix.os == 'centos' && matrix.version != '16.17.0') }}
         run: |
-          export "distribution=$([ ${{ matrix.os }} == ubuntu ] && (echo -ubuntu))"
-          echo "distribution=${distribution}" >> $GITHUB_OUTPUT
           export "runtime=$([ ${{ matrix.runtime }} == podman ] && (echo -podman))"
           echo "runtime=${runtime}" >> $GITHUB_OUTPUT
           export "nodejsVersion=$( echo -${{ matrix.version }})"
-          echo "suffix=${nodejsVersion}${distribution}${runtime}" >> $GITHUB_OUTPUT
+          echo "suffix=${nodejsVersion}-${os}${runtime}" >> $GITHUB_OUTPUT
       - name: use setup-buildx-action
-        if: ${{ !(matrix.os == 'centos' && matrix.version != '16.17.0') }}
         uses: docker/setup-buildx-action@v3
       - name: build jenkins agent with nodejs
-        if: ${{ !(matrix.os == 'centos' && matrix.version != '16.17.0') }}
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -182,7 +183,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           push: true
           provenance: false
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64, linux/arm64
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/jenkins-agent-nodejs:${{ needs.init-variable.outputs.container_tag }}${{ steps.step-variable.outputs.suffix }}
             ${{ secrets.DOCKER_USERNAME }}/jenkins-agent-nodejs:latest${{ steps.step-variable.outputs.suffix }}
@@ -190,8 +191,8 @@ jobs:
             REGISTRY_REPO=${{ secrets.DOCKER_USERNAME }}
             RUNTIME=${{ steps.step-variable.outputs.runtime }}
             VERSION=${{ matrix.version }}
-            DISTRIBUTION=${{ matrix.os }}
-            DISTRIBUTION_SUFFIX=${{ steps.step-variable.outputs.distribution }}
+            DISTRIBUTION=${{ env.os }}
+            DISTRIBUTION_SUFFIX=-${{ env.os }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -201,36 +202,29 @@ jobs:
       matrix:
         runtime: [ docker, podman ]
         version: [ "2.7.9", "3.8.19", "3.10.9", "3.11.9" ]
-        os: ["centos","ubuntu"]
     runs-on: ubuntu-latest
+    env:
+      os: ubuntu
     steps:
       - name: checkout
-        if: ${{ !(matrix.os == 'centos' && matrix.version != '3.8.19') }}
         uses: actions/checkout@v4
       - name: Set up QEMU
-        if: ${{ !(matrix.os == 'centos' && matrix.version != '3.8.19') }}
         uses: docker/setup-qemu-action@v3
       - name: Login to ghcr.io
-        if: ${{ !(matrix.os == 'centos' && matrix.version != '3.8.19') }}
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: init variables
         id: step-variable
-        if: ${{ !(matrix.os == 'centos' && matrix.version != '3.8.19') }}
         run: |
-          export "distribution=$([ ${{ matrix.os }} == ubuntu ] && (echo -ubuntu))"
-          echo "distribution=${distribution}" >> $GITHUB_OUTPUT 
           export "runtime=$([ ${{ matrix.runtime }} == podman ] && (echo -podman))"
           echo "runtime=${runtime}" >> $GITHUB_OUTPUT
           export "pythonVersion=$( echo -${{ matrix.version }})"
-          echo "suffix=${pythonVersion}${distribution}${runtime}" >> $GITHUB_OUTPUT
+          echo "suffix=${pythonVersion}-${os}${runtime}" >> $GITHUB_OUTPUT
       - name: use setup-buildx-action
-        if: ${{ !(matrix.os == 'centos' && matrix.version != '3.8.19') }}
         uses: docker/setup-buildx-action@v3
       - name: build jenkins agent with python
-        if: ${{ !(matrix.os == 'centos' && matrix.version != '3.8.19') }}
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -238,7 +232,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           push: true
           provenance: false
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64, linux/arm64
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/jenkins-agent-python:${{ needs.init-variable.outputs.container_tag }}${{ steps.step-variable.outputs.suffix }}
             ${{ secrets.DOCKER_USERNAME }}/jenkins-agent-python:latest${{ steps.step-variable.outputs.suffix }}
@@ -246,8 +240,8 @@ jobs:
             REGISTRY_REPO=${{ secrets.DOCKER_USERNAME }}
             RUNTIME=${{ steps.step-variable.outputs.runtime }}
             VERSION=${{ matrix.version }}
-            DISTRIBUTION=${{ matrix.os }}
-            DISTRIBUTION_SUFFIX=${{ steps.step-variable.outputs.distribution }}
+            DISTRIBUTION=${{ env.os }}
+            DISTRIBUTION_SUFFIX=-${{ env.os }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -257,36 +251,29 @@ jobs:
       matrix:
         runtime: [ docker, podman ]
         version: [ "1.17.13", "1.18.10", "1.20.14", "1.22.6"]
-        os: ["centos","ubuntu"]
     runs-on: ubuntu-latest
+    env:
+      os: ubuntu
     steps:
         - name: checkout
-          if: ${{ !(matrix.os == 'centos' && matrix.version != '1.17.13') }}
           uses: actions/checkout@v4
         - name: Set up QEMU
-          if: ${{ !(matrix.os == 'centos' && matrix.version != '3.8.19') }}
           uses: docker/setup-qemu-action@v3
         - name: Login to ghcr.io
-          if: ${{ !(matrix.os == 'centos' && matrix.version != '1.17.13') }}
           uses: docker/login-action@v2
           with:
             username: ${{ secrets.DOCKER_USERNAME }}
             password: ${{ secrets.DOCKER_PASSWORD }}
         - name: init variables
           id: step-variable
-          if: ${{ !(matrix.os == 'centos' && matrix.version != '1.17.13') }}
           run: |
-            export "distribution=$([ ${{ matrix.os }} == ubuntu ] && (echo -ubuntu))"
-            echo "distribution=${distribution}" >> $GITHUB_OUTPUT
             export "runtime=$([ ${{ matrix.runtime }} == podman ] && (echo -podman))"
             echo "runtime=${runtime}" >> $GITHUB_OUTPUT
             export "goVersion=$( echo -${{ matrix.version }})"
-            echo "suffix=${goVersion}${distribution}${runtime}" >> $GITHUB_OUTPUT
+            echo "suffix=${goVersion}-${os}${runtime}" >> $GITHUB_OUTPUT
         - name: use setup-buildx-action
-          if: ${{ !(matrix.os == 'centos' && matrix.version != '1.17.13') }}
           uses: docker/setup-buildx-action@v3
         - name: build jenkins agent with go
-          if: ${{ !(matrix.os == 'centos' && matrix.version != '1.17.13') }}
           uses: docker/build-push-action@v6
           with:
             context: .
@@ -294,7 +281,7 @@ jobs:
             github-token: ${{ secrets.GITHUB_TOKEN }}
             push: true
             provenance: false
-            platforms: linux/amd64,linux/arm64
+            platforms: linux/amd64, linux/arm64
             tags: |
               ${{ secrets.DOCKER_USERNAME }}/jenkins-agent-go:${{ needs.init-variable.outputs.container_tag }}${{ steps.step-variable.outputs.suffix }}
               ${{ secrets.DOCKER_USERNAME }}/jenkins-agent-go:latest${{ steps.step-variable.outputs.suffix }}
@@ -302,8 +289,8 @@ jobs:
               REGISTRY_REPO=${{ secrets.DOCKER_USERNAME }}
               RUNTIME=${{ steps.step-variable.outputs.runtime }}
               VERSION=${{ matrix.version }}
-              DISTRIBUTION=${{ matrix.os }}
-              DISTRIBUTION_SUFFIX=${{ steps.step-variable.outputs.distribution }}
+              DISTRIBUTION=${{ env.os }}
+              DISTRIBUTION_SUFFIX=-${{ env.os }}
             cache-from: type=gha
             cache-to: type=gha,mode=max
 
@@ -313,44 +300,32 @@ jobs:
       matrix:
         runtime: [docker, podman]
         version: [8, 11, 17, 21]
-        os: ["centos","ubuntu"]
     runs-on: ubuntu-latest
+    env:
+      os: ubuntu
     steps:
       - name: checkout
         uses: actions/checkout@v4
-        if: ${{ !(matrix.os == 'centos' && (matrix.version != '8') || matrix.version != '11') }}
       - name: Set up QEMU
-        if: ${{ !(matrix.os == 'centos' && (matrix.version != '8') || matrix.version != '11') }}
         uses: docker/setup-qemu-action@v3
       - name: Login to ghcr.io
         uses: docker/login-action@v2
-        if: ${{ !(matrix.os == 'centos' && (matrix.version != '8') || matrix.version != '11') }}
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: init variables
         id: step-variable
-        if: ${{ !(matrix.os == 'centos' && (matrix.version != '8') || matrix.version != '11') }}
         run: |
-          export "distribution=$([ ${{ matrix.os }} == ubuntu ] && (echo -ubuntu))"
-          echo "distribution=${distribution}" >> $GITHUB_OUTPUT
           export "runtime=$([ ${{ matrix.runtime }} == podman ] && (echo -podman))"
-          if [ "${{ matrix.os }}" == "centos" ] && [ "${{ matrix.version }}" == "8" ]; then
-            export "jdkVersion=-jdk1.8"
-            export "javaVersion=1.8.0"
-          else
-            export "jdkVersion=$(echo -jdk${{ matrix.version }})"
-            export "javaVersion=${{ matrix.version }}"
-          fi
+          export "jdkVersion=$(echo -jdk${{ matrix.version }})"
+          export "javaVersion=${{ matrix.version }}"
           echo "javaVersion=${javaVersion}" >> $GITHUB_OUTPUT
           echo "jdkVersion=${jdkVersion}" >> $GITHUB_OUTPUT
           echo "runtime=${runtime}" >> $GITHUB_OUTPUT
-          echo "suffix=${jdkVersion}${distribution}${runtime}" >> $GITHUB_OUTPUT
+          echo "suffix=${jdkVersion}-${os}${runtime}" >> $GITHUB_OUTPUT
       - name: use setup-buildx-action
-        if: ${{ !(matrix.os == 'centos' && (matrix.version != '8') || matrix.version != '11') }}
         uses: docker/setup-buildx-action@v3
       - name: build jenkins agent with maven
-        if: ${{ !(matrix.os == 'centos' && (matrix.version != '8') || matrix.version != '11') }}
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -358,7 +333,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           push: true
           provenance: false
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64, linux/arm64
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/jenkins-agent-maven:${{ needs.init-variable.outputs.container_tag }}${{ steps.step-variable.outputs.suffix }}
             ${{ secrets.DOCKER_USERNAME }}/jenkins-agent-maven:latest${{ steps.step-variable.outputs.suffix }}
@@ -366,8 +341,8 @@ jobs:
             REGISTRY_REPO=${{ secrets.DOCKER_USERNAME }}
             RUNTIME=${{ steps.step-variable.outputs.runtime }}
             JAVA_VERSION=${{ steps.step-variable.outputs.javaVersion }}
-            DISTRIBUTION=${{ matrix.os }}
-            DISTRIBUTION_SUFFIX=${{ steps.step-variable.outputs.distribution }}
+            DISTRIBUTION=${{ env.os }}
+            DISTRIBUTION_SUFFIX=-${{ env.os }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -375,7 +350,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref_type != 'tag'
     needs: [ init-variable, build-jenkins ]
-    steps:  
+    steps:
       - name: checkout
         uses: actions/checkout@v4
 

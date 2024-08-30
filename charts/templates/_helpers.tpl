@@ -187,6 +187,7 @@ rateLimiterConfig: {{ toYaml .rateLimiterConfig | nindent 2 }}
 {{- $language := .language -}}
 {{- $builder := .builder -}}
 {{- $root := .root -}}
+{{- $os := .os -}}
 {{- range $version := $builder.Versions -}}
   {{- $updatedBuilder := set $builder "ImageTag" $version }}
 - name: "{{ $language }}-{{ $version | regexFind "[^-]+$" }}"
@@ -194,6 +195,6 @@ rateLimiterConfig: {{ toYaml .rateLimiterConfig | nindent 2 }}
   inheritFrom: "{{ $language }}"
   containers:
   - name: "{{ $language }}"
-    image: "{{ include "builder.image" (dict "builder" $updatedBuilder "root" $root) }}"
+    image: "{{ include "builder.image" (dict "builder" $updatedBuilder "root" $root "os" $os) }}"
 {{- end -}}
 {{- end -}}
