@@ -29,10 +29,6 @@ function process_builder() {
                     suffix=$suffix"-podman"
                 fi
                 entry="- \"{{ .image.registry }}/$image:$version$suffix\""
-
-
-                echo "Checking image: $entry"
-
                 if [ "$os_type" == "centos" ]; then
                   if [ "$builder_name" == "Golang" ] && [[ "$version" =~ "1.17.13" ]]; then
                       echo "$image:$version$suffix"
