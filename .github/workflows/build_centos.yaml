@@ -13,7 +13,7 @@ jobs:
       matrix:
         runtime: [ docker, podman ]
         version: [ "16.17.0"]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     env:
       os: centos
     steps:
@@ -60,7 +60,7 @@ jobs:
       matrix:
         runtime: [ docker, podman ]
         version: [ "3.8.19" ]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     env:
       os: centos
     steps:
@@ -107,7 +107,7 @@ jobs:
       matrix:
         runtime: [ docker, podman ]
         version: [ "1.17.13" ]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     env:
       os: centos
     steps:
@@ -154,7 +154,7 @@ jobs:
       matrix:
         runtime: [ docker, podman ]
         version: [ 8, 11 ]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     env:
       os: centos
     steps:

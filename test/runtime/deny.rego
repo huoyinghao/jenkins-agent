@@ -51,25 +51,6 @@ deny[msg] {
 	msg := find_unknown_images(obj.jenkins.clouds[_].kubernetes.templates[_].containers[_])
 }
 
-agents := {
-	"base": {"container": "base", "image": "docker.io/amambadev/jenkins-agent-base:latest"},
-	"maven": {"container": "maven", "image": "docker.io/amambadev/jenkins-agent-maven:latest-jdk8"},
-	"maven-jdk11": {"container": "maven", "image": "docker.io/amambadev/jenkins-agent-maven:latest-jdk11-ubuntu"},
-	"maven-jdk17": {"container": "maven", "image": "docker.io/amambadev/jenkins-agent-maven:latest-jdk17-ubuntu"},
-	"maven-jdk21": {"container": "maven", "image": "docker.io/amambadev/jenkins-agent-maven:latest-jdk21-ubuntu"},
-	"nodejs": {"container": "nodejs", "image": "docker.io/amambadev/jenkins-agent-nodejs:latest-16.17.0"},
-	"nodejs-18.20.4": {"container": "nodejs", "image": "docker.io/amambadev/jenkins-agent-nodejs:latest-18.20.4-ubuntu"},
-	"nodejs-20.16.0": {"container": "nodejs", "image": "docker.io/amambadev/jenkins-agent-nodejs:latest-20.16.0-ubuntu"},
-	"go": {"container": "go", "image": "docker.io/amambadev/jenkins-agent-go:latest-1.22.6"},
-	"go-1.17.13": {"container": "go", "image": "docker.io/amambadev/jenkins-agent-go:latest-1.17.13-ubuntu"},
-	"go-1.18.10": {"container": "go", "image": "docker.io/amambadev/jenkins-agent-go:latest-1.18.10-ubuntu"},
-	"go-1.20.14": {"container": "go", "image": "docker.io/amambadev/jenkins-agent-go:latest-1.20.14-ubuntu"},
-	"python": {"container": "python", "image": "docker.io/amambadev/jenkins-agent-python:latest-3.8.19"},
-	"python-2.7.9": {"container": "python", "image": "docker.io/amambadev/jenkins-agent-python:latest-2.7.9-ubuntu"},
-	"python-3.10.9": {"container": "python", "image": "docker.io/amambadev/jenkins-agent-python:latest-3.10.9-ubuntu"},
-	"python-3.11.9": {"container": "python", "image": "docker.io/amambadev/jenkins-agent-python:latest-3.11.9-ubuntu"},
-}
-
 is_jnlp_image(container) if {
 	container.name == "jnlp"
 	container.image == "docker.io/jenkins/inbound-agent:4.10-2"
@@ -78,7 +59,7 @@ is_jnlp_image(container) if {
 is_agent_image(container) if {
 	some name
 	agents[name].container == container.name
-	re_match(agents[name].image, container.image)
+	agents[name].image ==  container.image
 }
 
 find_unknown_images(container) := msg if {
