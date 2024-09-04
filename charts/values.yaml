@@ -342,6 +342,8 @@ Agent:
   # Key Value selectors. Ex:
   # jenkins-agent: v1
 
+  # let relok8s to properly resolve agent images,just keep empty string
+  relok8sPlaceholder: ""
   Builder:
     Base:
       Image: amambadev/jenkins-agent-base
@@ -365,9 +367,9 @@ Agent:
       Image: amambadev/jenkins-agent-go
       ImageTag: latest-1.22.6
       Versions:
-          - latest-1.17.13
-          - latest-1.18.10
-          - latest-1.20.14
+        - latest-1.17.13
+        - latest-1.18.10
+        - latest-1.20.14
     Python:
       Image: amambadev/jenkins-agent-python
       ImageTag: latest-3.8.19
@@ -449,7 +451,7 @@ eventProxy:
       retryBackoffMaxDuration: 5000
       retryMaxJitter: 1000
     rateLimiterConfig:
-      qps: 1000                
+      qps: 1000
       burst: 100
   resources: {}
     #  requests:

@@ -54,13 +54,13 @@ install-conftest:
 .PHONY: conftest
 conftest: install-conftest
 	helm template  jenkins ./charts/ --debug -n jenkins -f test/default-registry/values.yaml > tmp.yaml
-	conftest test -o $(OUTPUT) --policy test/default-registry/deny.rego tmp.yaml
+	conftest test -o $(OUTPUT) --policy test/default-registry/ tmp.yaml
 
 	helm template  jenkins ./charts/ --debug -n jenkins -f test/override-registry/values.yaml > tmp.yaml
-	conftest test -o $(OUTPUT) --policy test/override-registry/deny.rego tmp.yaml
+	conftest test -o $(OUTPUT) --policy test/override-registry/ tmp.yaml
 
 	helm template  jenkins ./charts/ --debug -n jenkins -f test/runtime/values.yaml > tmp.yaml
-	conftest test -o $(OUTPUT) --policy test/runtime/deny.rego tmp.yaml
+	conftest test -o $(OUTPUT) --policy test/runtime/ tmp.yaml
 
 	rm tmp.yaml
 
@@ -71,3 +71,8 @@ install-opa:
 .PHONY: opa-test
 opa-test: install-opa
 	opa test test/default-registry/ -v
+
+
+.PHONY: update-agents-version
+update-agents-version:
+	./hack/update_agent_version.sh
