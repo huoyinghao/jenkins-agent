@@ -4,9 +4,9 @@
     state: present
   when: install_podman is defined and install_podman | bool
 - name: Remove docker if it exists
-  file:
-    path: /usr/bin/docker
-    state: absent
+  shell: |
+    rm -rf /usr/bin/docker* &&
+    rm -rf /usr/local/bin/docker*
   when: install_podman is defined and install_podman | bool
   retries: 3
   delay: 5
@@ -15,4 +15,10 @@
     src: /usr/bin/podman
     dest: /usr/bin/docker
     state: link
+  when: install_podman is defined and install_podman | bool
+
+- name: Validate podman installation
+  shell: |
+    podman --version
+    docker --version
   when: install_podman is defined and install_podman | bool
