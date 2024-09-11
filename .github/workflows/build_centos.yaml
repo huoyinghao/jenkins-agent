@@ -6,6 +6,10 @@ on:
         description: 'Container Tag'
         required: true
         type: string
+      platforms:
+        description: 'Platforms'
+        required: true
+        type: string
 
 jobs:
   build-agent-nodejs:
@@ -43,7 +47,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           push: true
           provenance: false
-          platforms: linux/amd64, linux/arm64
+          platforms: ${{ inputs.platforms }}
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/jenkins-agent-nodejs:${{ inputs.container_tag }}${{ steps.step-variable.outputs.suffix }}
             ${{ secrets.DOCKER_USERNAME }}/jenkins-agent-nodejs:latest${{ steps.step-variable.outputs.suffix }}
@@ -90,7 +94,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           push: true
           provenance: false
-          platforms: linux/amd64, linux/arm64
+          platforms: ${{ inputs.platforms }}
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/jenkins-agent-python:${{ inputs.container_tag }}${{ steps.step-variable.outputs.suffix }}
             ${{ secrets.DOCKER_USERNAME }}/jenkins-agent-python:latest${{ steps.step-variable.outputs.suffix }}
@@ -137,7 +141,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           push: true
           provenance: false
-          platforms: linux/amd64, linux/arm64
+          platforms: ${{ inputs.platforms }}
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/jenkins-agent-go:${{ inputs.container_tag }}${{ steps.step-variable.outputs.suffix }}
             ${{ secrets.DOCKER_USERNAME }}/jenkins-agent-go:latest${{ steps.step-variable.outputs.suffix }}
@@ -191,7 +195,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           push: true
           provenance: false
-          platforms: linux/amd64, linux/arm64
+          platforms: ${{ inputs.platforms }}
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/jenkins-agent-maven:${{ inputs.container_tag }}${{ steps.step-variable.outputs.suffix }}
             ${{ secrets.DOCKER_USERNAME }}/jenkins-agent-maven:latest${{ steps.step-variable.outputs.suffix }}
