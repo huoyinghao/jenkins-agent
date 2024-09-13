@@ -354,6 +354,10 @@ jobs:
             DISTRIBUTION_SUFFIX=-${{ env.os }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+  validate-relok8s-images:
+    needs: [build-jenkins, build-agent-maven, build-agent-golang, build-agent-python, build-agent-nodejs]
+    uses: ./.github/workflows/check_relok8s.yaml
+    secrets: inherit
   e2e:
     runs-on: ubuntu-24.04
     if: github.ref_type != 'tag'
