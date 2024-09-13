@@ -1,20 +1,23 @@
 - name: Install Podman
-  yum:
-    name: podman
-    state: present
-  when: install_podman is defined and install_podman | bool
-
-- name: Remove Docker if it exists
-  file:
-    path: /usr/bin/docker
-    state: absent
+  shell: |
+    ARCH=$(uname -m)
+    if [[ ${ARCH} == 'x86_64' ]]; then
+      curl -L -o /etc/yum.repos.d/home:alvistack.repo https://download.opensuse.org/repositories/home:alvistack/CentOS_7/home:alvistack.repo
+    elif [[ ${ARCH} == 'aarch64' ]]; then
+      curl -L -o /etc/yum.repos.d/devel:kubic:libcontainers:stable.repo https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/CentOS_7/devel:kubic:libcontainers:stable.repo
+    fi
+    yum update -y
+    yum -y install podman fuse-overlayfs podman-netavark 
+    rm -rf /usr/bin/docker* 
+    rm -rf /usr/local/bin/docker*
+    ln -s /usr/bin/podman /usr/bin/docker
+    yum -y clean all --enablerepo='*'
   when: install_podman is defined and install_podman | bool
   retries: 3
   delay: 5
 
-- name: Create symbolic link from Podman to Docker
-  file:
-    src: /usr/bin/podman
-    dest: /usr/bin/docker
-    state: link
+- name: Validate podman installation
+  shell: |
+    podman --version
+    docker --version
   when: install_podman is defined and install_podman | bool
