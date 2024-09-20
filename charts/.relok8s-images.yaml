@@ -17,9 +17,9 @@
 
 # The following content is generated from the Builder.{language}.Versions in values.yaml, see hack/update_agent_version.sh
 - "{{ .image.registry }}/{{ .Agent.Builder.NodeJs.Image }}:{{ .Agent.relok8sPlaceholder }}latest-18.20.4-ubuntu"
-- "{{ .image.registry }}/{{ .Agent.Builder.NodeJs.Image }}:{{ .Agent.relok8sPlaceholder }}latest-20.16.0-ubuntu"
+- "{{ .image.registry }}/{{ .Agent.Builder.NodeJs.Image }}:{{ .Agent.relok8sPlaceholder }}latest-20.17.0-ubuntu"
 - "{{ .image.registry }}/{{ .Agent.Builder.NodeJs.Image }}:{{ .Agent.relok8sPlaceholder }}latest-18.20.4-ubuntu-podman"
-- "{{ .image.registry }}/{{ .Agent.Builder.NodeJs.Image }}:{{ .Agent.relok8sPlaceholder }}latest-20.16.0-ubuntu-podman"
+- "{{ .image.registry }}/{{ .Agent.Builder.NodeJs.Image }}:{{ .Agent.relok8sPlaceholder }}latest-20.17.0-ubuntu-podman"
 - "{{ .image.registry }}/{{ .Agent.Builder.Maven.Image }}:{{ .Agent.relok8sPlaceholder }}latest-jdk11-ubuntu"
 - "{{ .image.registry }}/{{ .Agent.Builder.Maven.Image }}:{{ .Agent.relok8sPlaceholder }}latest-jdk17-ubuntu"
 - "{{ .image.registry }}/{{ .Agent.Builder.Maven.Image }}:{{ .Agent.relok8sPlaceholder }}latest-jdk21-ubuntu"

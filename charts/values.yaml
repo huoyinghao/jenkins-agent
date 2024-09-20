@@ -350,12 +350,12 @@ Agent:
       ImageTag: latest
     NodeJs:
       Image: amambadev/jenkins-agent-nodejs
-      ImageTag: latest-16.17.0
+      ImageTag: latest-16.20.2
       # Versions for auto generator Jenkins CASC Config and relock_k8s images.
       # must build image first.
       Versions:
         - latest-18.20.4
-        - latest-20.16.0
+        - latest-20.17.0
     Maven:
       Image: amambadev/jenkins-agent-maven
       ImageTag: latest-jdk8

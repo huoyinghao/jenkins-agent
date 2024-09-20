@@ -42,6 +42,7 @@
         - ./tasks/{{ distribution }}/maven.yaml
         - ./tasks/{{ distribution }}/python.yaml
         - ./tasks/{{ distribution }}/podman.yaml
+        - ./tasks/{{ distribution }}/nodejs.yaml
 
 
 
