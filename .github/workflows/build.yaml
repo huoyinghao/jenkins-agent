@@ -16,6 +16,7 @@ jobs:
     runs-on: ubuntu-24.04
     outputs:
       container_tag: ${{ steps.init_variable.outputs.container_tag }}
+      platforms: ${{ steps.init_variable.outputs.platforms }}
     steps:
       - name: checkout
         uses: actions/checkout@v4
