@@ -1,0 +1,14 @@
+- name: Set Node.js variables
+  set_fact:
+    install_url: "https://rpm.nodesource.com/setup_{{ node_version.split('.')[0] }}.x"
+  when: node_version is defined and node_version != ""
+
+- name: Install Node.js
+  shell: |
+    curl -fsSL {{ install_url }} | bash -
+    yum install -y nodejs-{{ node_version }}
+    npm install -g yarn
+    node --version
+    npm --version
+    yarn -v
+  when: node_version is defined and node_version != ""

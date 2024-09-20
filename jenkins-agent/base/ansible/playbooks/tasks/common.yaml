@@ -97,17 +97,6 @@
   retries: 3
   delay: 5
 
-- name: Install Node.js
-  shell: |
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | bash  
-    . "$NVM_DIR/nvm.sh"  
-    nvm install {{ node_version }}  
-    nvm alias default {{ node_version }}  
-    nvm use default
-  when: node_version is defined and node_version != ""
-  retries: 3
-  delay: 5
-
 - name: Install ArgoCD Cli
   shell: |
     curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/download/{{ argocd_cli_version }}/argocd-linux-{{ arch_amd64 or arch_arm64 }}  

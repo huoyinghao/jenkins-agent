@@ -13,7 +13,7 @@ agents := {
   "maven-jdk11": {"container": "maven", "image": "docker.io/amambadev/jenkins-agent-maven:latest-jdk11-ubuntu"},
   "maven-jdk17": {"container": "maven", "image": "docker.io/amambadev/jenkins-agent-maven:latest-jdk17-ubuntu"},
   "maven-jdk21": {"container": "maven", "image": "docker.io/amambadev/jenkins-agent-maven:latest-jdk21-ubuntu"},
-  "nodejs": {"container": "nodejs", "image": "docker.io/amambadev/jenkins-agent-nodejs:latest-16.17.0"},
+  "nodejs": {"container": "nodejs", "image": "docker.io/amambadev/jenkins-agent-nodejs:latest-16.20.2"},
   "nodejs-18.20.4": {"container": "nodejs", "image": "docker.io/amambadev/jenkins-agent-nodejs:latest-18.20.4-ubuntu"},
-  "nodejs-20.16.0": {"container": "nodejs", "image": "docker.io/amambadev/jenkins-agent-nodejs:latest-20.16.0-ubuntu"}
+  "nodejs-20.17.0": {"container": "nodejs", "image": "docker.io/amambadev/jenkins-agent-nodejs:latest-20.17.0-ubuntu"}
 }
