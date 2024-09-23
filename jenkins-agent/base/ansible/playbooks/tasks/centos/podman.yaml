@@ -8,8 +8,8 @@
     fi
     yum update -y
     yum -y install podman fuse-overlayfs podman-netavark 
-    rm -rf /usr/bin/docker* 
-    rm -rf /usr/local/bin/docker*
+    rm -rf /usr/bin/docker 
+    rm -rf /usr/local/bin/docker
     ln -s /usr/bin/podman /usr/bin/docker
     yum -y clean all --enablerepo='*'
   when: install_podman is defined and install_podman | bool
@@ -20,4 +20,5 @@
   shell: |
     podman --version
     docker --version
+    ls /bin | grep docker
   when: install_podman is defined and install_podman | bool

@@ -5,20 +5,16 @@
   when: install_podman is defined and install_podman | bool
 - name: Remove docker if it exists
   shell: |
-    rm -rf /usr/bin/docker* &&
-    rm -rf /usr/local/bin/docker*
+    rm -rf /usr/bin/docker &&
+    rm -rf /usr/local/bin/docker
+    ln -s /usr/bin/podman /usr/bin/docker
   when: install_podman is defined and install_podman | bool
   retries: 3
   delay: 5
-- name: Create symbolic link from podman to docker
-  file:
-    src: /usr/bin/podman
-    dest: /usr/bin/docker
-    state: link
-  when: install_podman is defined and install_podman | bool
 
 - name: Validate podman installation
   shell: |
     podman --version
     docker --version
+    ls /bin | grep docker
   when: install_podman is defined and install_podman | bool
