@@ -402,6 +402,7 @@ jobs:
           image_tag=${{ steps.get_version.outputs.VERSION }}
           chart_version=${{ steps.get_version.outputs.VERSION }}
           sed -i "s/latest/${image_tag}/g" $HELM_CHARTS_DIR/values.yaml
+          sed -i "s/latest/${image_tag}/g" $HELM_CHARTS_DIR/.relok8s-images.yaml
           chart_smever=${chart_version#"v"}
           sed -i "s/0.1.0/${chart_smever}/g" $HELM_CHARTS_DIR/Chart.yaml
       - uses: getsentry/action-github-app-token@v2
