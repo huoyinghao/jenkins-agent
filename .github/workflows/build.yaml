@@ -101,6 +101,7 @@ jobs:
       packages: write
     needs: [init-variable, manifest-conformance]
     strategy:
+      fail-fast: false
       matrix:
         os: ["centos", "ubuntu"]
     runs-on: ubuntu-24.04
@@ -135,6 +136,13 @@ jobs:
             ${{ secrets.DOCKER_USERNAME }}/jenkins-agent-base:latest${{ steps.step-variable.outputs.distribution }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+      - name: check tools with docker
+        run: |
+          AGENT_IMAGE="${{ secrets.DOCKER_USERNAME }}/jenkins-agent-base:${{ needs.init-variable.outputs.container_tag }}${{ steps.step-variable.outputs.distribution }}"
+          echo "Agent Image: ${AGENT_IMAGE}"
+          docker run -v ./hack/check_agent_base_tools.sh:/tmp/check_agent_base_tools.sh -e AGENT_IMAGE=$AGENT_IMAGE -i $AGENT_IMAGE /bin/bash -c "
+            ./tmp/check_agent_base_tools.sh
+          "
       - name: build jenkins agent with podman
         uses: docker/build-push-action@v6
         with:
@@ -153,6 +161,13 @@ jobs:
             DISTRIBUTION_SUFFIX=${{ steps.step-variable.outputs.distribution }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+      - name: check tools with podman
+        run: |
+          AGENT_IMAGE="${{ secrets.DOCKER_USERNAME }}/jenkins-agent-base:${{ needs.init-variable.outputs.container_tag }}${{ steps.step-variable.outputs.distribution }}-podman"
+          echo "Agent Image: ${AGENT_IMAGE}"
+          docker run -v ./hack/check_agent_base_tools.sh:/tmp/check_agent_base_tools.sh -e AGENT_IMAGE=$AGENT_IMAGE -i $AGENT_IMAGE /bin/bash -c "
+            ./tmp/check_agent_base_tools.sh
+          "
   build-deprected-agent-centos:
     needs: [build-jenkins-agent-base, init-variable]
     uses: ./.github/workflows/build_centos.yaml
@@ -163,6 +178,7 @@ jobs:
   build-agent-nodejs:
     needs: [build-jenkins-agent-base, init-variable]
     strategy:
+      fail-fast: false
       matrix:
         runtime: [docker, podman]
         version: [16.20.2, 18.20.4, 20.17.0]
@@ -208,9 +224,21 @@ jobs:
             DISTRIBUTION_SUFFIX=-${{ env.os }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+      - name: check nodejs agent tools
+        run: |
+          SOFTWARE_MATRIX=nodejs-${{ matrix.version }}
+          AGENT_IMAGE=${{ secrets.DOCKER_USERNAME }}/jenkins-agent-nodejs:${{ needs.init-variable.outputs.container_tag }}${{ steps.step-variable.outputs.suffix }}
+          echo "Software Matrix Version: ${SOFTWARE_MATRIX}, Agent Image: ${AGENT_IMAGE}"
+          docker run -v ./hack/check_agent_software_tools.sh:/tmp/check_agent_software_tools.sh \
+            -e AGENT_IMAGE=$AGENT_IMAGE \
+            -e SOFTWARE_MATRIX=${SOFTWARE_MATRIX} \
+            -i $AGENT_IMAGE /bin/bash -c "
+              ./tmp/check_agent_software_tools.sh
+            "
   build-agent-python:
     needs: [build-jenkins-agent-base, init-variable]
     strategy:
+      fail-fast: false
       matrix:
         runtime: [docker, podman]
         version: [3.8.19, 2.7.9, 3.10.9, 3.11.9]
@@ -256,9 +284,21 @@ jobs:
             DISTRIBUTION_SUFFIX=-${{ env.os }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+      - name: check python agent tools
+        run: |
+          SOFTWARE_MATRIX=python-${{ matrix.version }}
+          AGENT_IMAGE=${{ secrets.DOCKER_USERNAME }}/jenkins-agent-python:${{ needs.init-variable.outputs.container_tag }}${{ steps.step-variable.outputs.suffix }}
+          echo "Software Matrix Version: ${SOFTWARE_MATRIX}, Agent Image: ${AGENT_IMAGE}"
+          docker run -v ./hack/check_agent_software_tools.sh:/tmp/check_agent_software_tools.sh \
+            -e AGENT_IMAGE=$AGENT_IMAGE \
+            -e SOFTWARE_MATRIX=${SOFTWARE_MATRIX} \
+            -i $AGENT_IMAGE /bin/bash -c "
+              ./tmp/check_agent_software_tools.sh
+            "
   build-agent-golang:
     needs: [build-jenkins-agent-base, init-variable]
     strategy:
+      fail-fast: false
       matrix:
         runtime: [docker, podman]
         version: [1.22.6, 1.17.13, 1.18.10, 1.20.14]
@@ -304,9 +344,21 @@ jobs:
             DISTRIBUTION_SUFFIX=-${{ env.os }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+      - name: check go agent tools
+        run: |
+          SOFTWARE_MATRIX=go-${{ matrix.version }}
+          AGENT_IMAGE=${{ secrets.DOCKER_USERNAME }}/jenkins-agent-go:${{ needs.init-variable.outputs.container_tag }}${{ steps.step-variable.outputs.suffix }}
+          echo "Software Matrix Version: ${SOFTWARE_MATRIX}, Agent Image: ${AGENT_IMAGE}"
+          docker run -v ./hack/check_agent_software_tools.sh:/tmp/check_agent_software_tools.sh \
+            -e AGENT_IMAGE=$AGENT_IMAGE \
+            -e SOFTWARE_MATRIX=${SOFTWARE_MATRIX} \
+            -i $AGENT_IMAGE /bin/bash -c "
+              ./tmp/check_agent_software_tools.sh
+            "
   build-agent-maven:
     needs: [build-jenkins-agent-base, init-variable]
     strategy:
+      fail-fast: false
       matrix:
         runtime: [docker, podman]
         version: ["8", "11", "17", "21"]
@@ -355,6 +407,17 @@ jobs:
             DISTRIBUTION_SUFFIX=-${{ env.os }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+      - name: check maven agent tools
+        run: |
+          SOFTWARE_MATRIX=java-${{ matrix.version }}
+          AGENT_IMAGE=${{ secrets.DOCKER_USERNAME }}/jenkins-agent-maven:${{ needs.init-variable.outputs.container_tag }}${{ steps.step-variable.outputs.suffix }}
+          echo "Software Matrix Version: ${SOFTWARE_MATRIX}, Agent Image: ${AGENT_IMAGE}"
+          docker run -v ./hack/check_agent_software_tools.sh:/tmp/check_agent_software_tools.sh \
+            -e AGENT_IMAGE=$AGENT_IMAGE \
+            -e SOFTWARE_MATRIX=${SOFTWARE_MATRIX} \
+            -i $AGENT_IMAGE /bin/bash -c "
+              ./tmp/check_agent_software_tools.sh
+            "
   validate-relok8s-images:
     needs: [build-jenkins, build-agent-maven, build-agent-golang, build-agent-python, build-agent-nodejs]
     uses: ./.github/workflows/check_relok8s.yaml
