@@ -49,6 +49,23 @@
   raw: wget -q https://bootstrap.pypa.io/get-pip.py && python3 get-pip.py && rm get-pip.py && ln -s /usr/local/bin/pip3 /usr/bin/pip
   when: python_version is defined and python_version != "" and python_major_version == "3"
 
+- name: Install Pip
+  raw:
+    wget https://files.pythonhosted.org/packages/b2/40/4e00501c204b457f10fe410da0c97537214b2265247bc9a5bc6edd55b9e4/setuptools-44.1.1.zip  && \
+    unzip setuptools-44.1.1.zip  && \
+    cd setuptools-44.1.1  && \
+    python setup.py install  && \
+    cd .. && \
+    rm -rf setuptools-44.1.1.zip setuptools-44.1.1  && \
+    wget https://files.pythonhosted.org/packages/53/7f/55721ad0501a9076dbc354cc8c63ffc2d6f1ef360f49ad0fbcce19d68538/pip-20.3.4.tar.gz  && \
+    tar -xvf pip-20.3.4.tar.gz  && \
+    cd pip-20.3.4  && \
+    python setup.py install  && \
+    cd .. && \
+    rm -rf pip-20.3.4.tar.gz pip-20.3.4  && \
+    pip -V
+  when: python_version is defined and python_version != "" and python_major_version == "2"
+
 - name: Validate Python installation
   raw: python --version
   when: python_version is defined and python_version != ""
