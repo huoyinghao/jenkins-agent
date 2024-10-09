@@ -6,7 +6,7 @@
 - name: Install Node.js
   shell: |
     curl -fsSL {{ install_url }} | bash -
-    apt-get install -y nodejs
+    apt-get install -y nodejs={{ node_version }}-1nodesource1
     npm install -g yarn
     node --version
     npm --version

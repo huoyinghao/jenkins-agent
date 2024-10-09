@@ -2,7 +2,6 @@ ARG RUNTIME
 ARG REGISTRY_REPO=amambadev
 ARG DISTRIBUTION
 ARG DISTRIBUTION_SUFFIX
-ARG TARGETARCH
 FROM $REGISTRY_REPO/jenkins-agent-base:latest$DISTRIBUTION_SUFFIX$RUNTIME
 
 ARG DISTRIBUTION
@@ -25,6 +24,6 @@ ENV PATH=$M2:$PATH:$JAVA_HOME/bin
 
 # Set JDK to be 32bit
 COPY jenkins-agent/maven/set_java $M2
-RUN chmod +x $M2/set_java && $M2/set_java && rm $M2/set_java
+RUN chmod +x $M2/set_java && $M2/set_java && rm $M2/set_java && echo "JAVA_HOME=$JAVA_HOME"
 
 CMD ["mvn","-version"]

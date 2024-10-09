@@ -37,6 +37,12 @@ function check_maven_command() {
   else
     message "mvn is executable"
   fi
+
+  # validate mvn configuration
+  if mvn -h 2>&1 | grep -q "JAVA_HOME"; then
+    error_message "mvn configuration is error, JAVA_HOME is not set"
+    count=$((count+1))
+  fi
 }
 
 function check_nodejs_command() {
