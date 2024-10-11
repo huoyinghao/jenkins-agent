@@ -27,7 +27,7 @@ set -x
 helm upgrade --install --wait  --create-namespace --cleanup-on-fail \
       ${LOCAL_RELEASE_NAME}  charts/ \
       -n "${TARGET_NS}" \
-      ${values} 
+      ${values}
 
 set +x
 
