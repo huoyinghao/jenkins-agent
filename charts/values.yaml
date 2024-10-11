@@ -28,7 +28,7 @@ Master:
   UseSecurity: true
   HostNetworking: false
   AdminUser: admin
-  AdminPassword: Admin01
+  AdminPassword: ""
   resources: {}
     # requests:
     #   cpu: "1"

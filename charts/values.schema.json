@@ -33,7 +33,7 @@
             "properties": {
                 "AdminPassword": {
                     "type": "string",
-                    "default": "Admin01"
+                    "default": ""
                 },
                 "AdminUser": {
                     "type": "string",
