@@ -21,19 +21,40 @@
   retries: 3
   delay: 5
 
-- name: Install Python from source
+- name: Install Python3.x from source
   shell: |
     wget -q https://www.python.org/ftp/python/{{ python_version }}/Python-{{ python_version }}.tgz && \
     tar xf Python-{{ python_version }}.tgz && \
     cd Python-{{ python_version }}  && \
     ./configure && \
-    make --quiet && \
-    make --quiet altinstall && \
+    make -j8 --quiet && \
+    make --quiet altinstall -j8 && \
     cd .. && \
     rm -rf Python-{{ python_version }} && \
     rm Python-{{ python_version }}.tgz && \
     rm -rf /usr/bin/python*
-  when: python_version is defined and python_version != ""
+  when: python_version is defined and python_version != "" and python_major_version == "3"
+  retries: 3
+  delay: 5
+
+- name: Install Python2.x from source
+  shell: |
+    apt uninstall libssl-dev -y
+    echo "deb [trusted=yes] http://security.ubuntu.com/ubuntu bionic-security main" >> /etc/apt/sources.list
+    apt update && apt-cache policy libssl1.0-dev
+    apt-get install libssl1.0-dev -y
+  
+    wget -q https://www.python.org/ftp/python/{{ python_version }}/Python-{{ python_version }}.tgz && \
+    tar xf Python-{{ python_version }}.tgz && \
+    cd Python-{{ python_version }}  && \
+    ./configure && \
+    make --quiet -j8 && \
+    make --quiet altinstall -j8 && \
+    cd .. && \
+    rm -rf Python-{{ python_version }} && \
+    rm Python-{{ python_version }}.tgz && \
+    rm -rf /usr/bin/python*
+  when: python_version is defined and python_version != "" and python_major_version == "2"
   retries: 3
   delay: 5
 
@@ -69,5 +90,5 @@
   when: python_version is defined and python_version != "" and python_major_version == "2"
 
 - name: Validate Python installation
-  raw: python --version
+  raw: python --version && python -m ssl
   when: python_version is defined and python_version != ""

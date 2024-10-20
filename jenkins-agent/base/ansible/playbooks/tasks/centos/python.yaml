@@ -27,8 +27,8 @@
     tar xf Python-{{ python_version }}.tgz && \
     cd Python-{{ python_version }}  && \
     ./configure && \
-    make --quiet && \
-    make --quiet altinstall && \
+    make --quiet -j8 && \
+    make --quiet altinstall -j8 && \
     cd .. && \
     rm -rf Python-{{ python_version }} && \
     rm Python-{{ python_version }}.tgz && \
