@@ -18,7 +18,11 @@
 
 - name: Install Helm
   shell: |
-    curl -f https://get.helm.sh/helm-v{{ helm_version }}-linux-{{ arch_amd64 or arch_arm64 }}.tar.gz | tar xzv -C /usr/local/bin && mv /usr/local/bin/linux-{{ arch_amd64 or arch_arm64 }}/helm /usr/local/bin/helm && helm version
+    wget https://get.helm.sh/helm-v{{ helm_version }}-linux-{{ arch_amd64 or arch_arm64 }}.tar.gz
+    tar -zxvf helm-v{{ helm_version }}-linux-{{ arch_amd64 or arch_arm64 }}.tar.gz
+    mv linux-{{ arch_amd64 or arch_arm64 }}/helm /usr/local/bin/helm
+    rm -rf helm-v{{ helm_version }}-linux-{{ arch_amd64 or arch_arm64 }}.tar.gz
+    helm version
   register: helm_install_result
   until: helm_install_result is succeeded
   when: required is defined and required | bool
