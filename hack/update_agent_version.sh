@@ -9,11 +9,12 @@ if ! command -v yq &> /dev/null; then
   yq --version
 fi
 
+chart_path="charts/jenkins-full"
 version_file="version.yaml"
-relok8s_file="charts/.relok8s-images.yaml"
+relok8s_file=$chart_path"/.relok8s-images.yaml"
 
 function update_chart_value() {
-  chart_values_path="charts/values.yaml"
+  chart_values_path=$chart_path"/values.yaml"
   languages=$(yq eval '.Agent | keys' "$version_file" | sed 's/^- //g')
   for lang in $languages; do
     versions=$(yq eval ".Agent.${lang}[]" "$version_file")

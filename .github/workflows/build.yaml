@@ -101,7 +101,7 @@ jobs:
       packages: write
     needs: [init-variable, manifest-conformance]
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
         os: ["centos", "ubuntu"]
     runs-on: ubuntu-24.04
@@ -183,7 +183,7 @@ jobs:
   build-agent-nodejs:
     needs: [build-jenkins-agent-base, init-variable]
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
         runtime: [docker, podman]
         version: [16.20.2, 18.20.4, 20.17.0]
@@ -243,7 +243,7 @@ jobs:
   build-agent-python:
     needs: [build-jenkins-agent-base, init-variable]
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
         runtime: [docker, podman]
         version: [3.8.19, 2.7.9, 3.10.9, 3.11.9]
@@ -303,7 +303,7 @@ jobs:
   build-agent-golang:
     needs: [build-jenkins-agent-base, init-variable]
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
         runtime: [docker, podman]
         version: [1.22.6, 1.17.13, 1.18.10, 1.20.14]
@@ -363,7 +363,7 @@ jobs:
   build-agent-maven:
     needs: [build-jenkins-agent-base, init-variable]
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
         runtime: [docker, podman]
         version: ["8", "11", "17", "21"]
@@ -444,14 +444,15 @@ jobs:
         run: |
           ./hack/install/envsubst.sh
           VERSION=${{ needs.init-variable.outputs.container_tag }} make deploy
-  publish-chart:
+  publish-charts:
     if: startsWith(github.ref, 'refs/tags/v')
     needs: [build-jenkins, build-agent-maven, build-agent-golang, build-agent-python, build-agent-nodejs]
+    strategy:
+      fail-fast: true
+      matrix:
+        chart_dir: [charts/jenkins, charts/jenkins-full]
     permissions:
       contents: write
-    env:
-      HELM_CHARTS_DIR: charts
-      HELM_CHART_NAME: jenkins
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
@@ -469,10 +470,10 @@ jobs:
         run: |
           image_tag=${{ steps.get_version.outputs.VERSION }}
           chart_version=${{ steps.get_version.outputs.VERSION }}
-          sed -i "s/latest/${image_tag}/g" $HELM_CHARTS_DIR/values.yaml
-          sed -i "s/latest/${image_tag}/g" $HELM_CHARTS_DIR/.relok8s-images.yaml
+          sed -i "s/latest/${image_tag}/g" ${{ matrix.chart_dir }}/values.yaml
+          sed -i "s/latest/${image_tag}/g" ${{ matrix.chart_dir }}/.relok8s-images.yaml
           chart_smever=${chart_version#"v"}
-          sed -i "s/0.1.0/${chart_smever}/g" $HELM_CHARTS_DIR/Chart.yaml
+          sed -i "s/0.1.0/${chart_smever}/g" ${{ matrix.chart_dir }}/Chart.yaml
       - uses: getsentry/action-github-app-token@v2
         id: get_app_token
         with:
@@ -483,7 +484,7 @@ jobs:
           git config --global user.email "amamba[bot]@users.noreply.github.com"
           git config --global user.name "amamba[bot]"
           git clone https://x-access-token:${{ steps.get_app_token.outputs.token }}@github.com/amamba-io/charts.git amamba-charts
-          helm package $HELM_CHARTS_DIR --destination ./amamba-charts/docs/
+          helm package ${{ matrix.chart_dir }} --destination ./amamba-charts/docs/
           helm repo index --url https://amamba-io.github.io/charts ./amamba-charts/docs/
           cd amamba-charts/
           git add docs/
