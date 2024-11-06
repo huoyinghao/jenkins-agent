@@ -4,9 +4,9 @@ nameOverride: "jenkins"
 fullnameOverride: ""
 pullPolicy: IfNotPresent
 plugins:
-# if "Values.eventProxy.enable" is "true", will use sidecar model to send event first;
-# if "receiver" not empty, will use receiver to send event;
-# otherwise, will send event to "http://amamba-devops-server.targetNamespace:80/apis/internel.amamba.io/devops/pipeline/v1alpha1/webhooks/jenkins".
+  # if "Values.eventProxy.enable" is "true", will use sidecar model to send event first;
+  # if "receiver" not empty, will use receiver to send event;
+  # otherwise, will send event to "http://amamba-devops-server.targetNamespace:80/apis/internel.amamba.io/devops/pipeline/v1alpha1/webhooks/jenkins".
   eventDispatcher:
     receiver: ""
 
@@ -35,11 +35,12 @@ Master:
     #   memory: "799Mi"
     # limits:
     #   cpu: "2"
-    #   memory: "4096Mi"
+  #   memory: "4096Mi"
 
   UsePodSecurityContext: true
   JavaOpts: |-
-    -XX:MaxRAMPercentage=70.0 
+    -XX:+PrintFlagsFinal
+    -XX:MaxRAMPercentage=70.0
     -XX:MinHeapFreeRatio=8
     -XX:MaxHeapFreeRatio=15
     -XX:MinRAMPercentage=20.0
@@ -53,8 +54,8 @@ Master:
     -Dhudson.slaves.NodeProvisioner.recurrencePeriod=5000
     -Dhudson.security.csrf.DefaultCrumbIssuer.EXCLUDE_SESSION_ID=true
     -Dio.jenkins.plugins.casc.ConfigurationAsCode.initialDelay=10000
-    -Djenkins.install.runSetupWizard=false
-    -XX:+UseG1GC
+    -Djenkins.install.runSetupWizard=false  
+    -XX:+UseConcMarkSweepGC
     -XX:+UseStringDeduplication
     -XX:+ParallelRefProcEnabled
     -XX:+DisableExplicitGC
@@ -109,7 +110,7 @@ Master:
   SlaveListenerServiceType: ClusterIP
   SlaveListenerServiceAnnotations: {}
   LoadBalancerSourceRanges:
-  - 0.0.0.0/0
+    - 0.0.0.0/0
 
   ContainerEnv:
     - name: CASC_JENKINS_CONFIG
@@ -134,8 +135,8 @@ Master:
       value: "P@ssw0rd"
 
   InitScripts:
-#    TimeZone:
-#      System.setProperty('org.apache.commons.jelly.tags.fmt.timeZone', 'Asia/Shanghai')
+    #    TimeZone:
+    #      System.setProperty('org.apache.commons.jelly.tags.fmt.timeZone', 'Asia/Shanghai')
 
     Mailer: |-
       import jenkins.model.*
@@ -365,40 +366,25 @@ Agent:
       ImageTag: latest
     NodeJs:
       Image: amambadev/jenkins-agent-nodejs
-      ImageTag: latest-16.20.2
+      ImageTag: latest-16.20.2-ubuntu
       # Versions for auto generator Jenkins CASC Config and relock_k8s images.
       # must build image first.
-      Versions:
-        - latest-18.20.4
-        - latest-20.17.0
     Maven:
       Image: amambadev/jenkins-agent-maven
-      ImageTag: latest-jdk8
-      Versions:
-        - latest-jdk11
-        - latest-jdk17
-        - latest-jdk21
+      ImageTag: latest-jdk8-ubuntu
     Golang:
       Image: amambadev/jenkins-agent-go
-      ImageTag: latest-1.22.6
-      Versions:
-        - latest-1.17.13
-        - latest-1.18.10
-        - latest-1.20.14
+      ImageTag: latest-1.22.6-ubuntu
     Python:
       Image: amambadev/jenkins-agent-python
-      ImageTag: latest-3.8.19
-      Versions:
-        - latest-2.7.9
-        - latest-3.10.9
-        - latest-3.11.9
+      ImageTag: latest-3.8.19-ubuntu
     ContainerRuntime: podman # Available values: docker, podman
 
 Persistence:
   Enabled: true
   # if "-" use default sc.you can specify other sc,like: hwameistor-storage-lvm-hdd, hwameistor-storage-lvm-hdd-ha
   StorageClass: "-"
-#  ExistingClaim: ""
+  #  ExistingClaim: ""
 
   Annotations: {}
   AccessMode: ReadWriteOnce
@@ -460,7 +446,7 @@ eventProxy:
     #    memory: 100Mi
     #  limits:
     #    cpu: 200m
-    #    memory: 200Mi
+  #    memory: 200Mi
 
 trace:
   enabled: false

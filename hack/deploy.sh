@@ -25,7 +25,7 @@ fi
 set -x
 
 helm upgrade --install --wait  --create-namespace --cleanup-on-fail \
-      ${LOCAL_RELEASE_NAME}  charts/ \
+      ${LOCAL_RELEASE_NAME}  charts/jenkins-full \
       -n "${TARGET_NS}" \
       ${values}
 
