@@ -306,6 +306,11 @@ Master:
     # - secretName: jenkins.cluster.local
     #   hosts:
     #     - jenkins.cluster.local
+  metrics:
+    enabled: false
+    serviceMonitor:
+      enabled: false
+      additionalLabels: {}
 
 Agent:
   Enabled: true
@@ -415,20 +420,6 @@ rbac:
 
 securityRealm:
   type: local # support values include local, ldap
-
-# Install service monitor
-prometheus:
-  namespace: ""
-  serviceMonitor:
-    disabled: false
-    labels: { }
-  prometheusRule:
-    disabled: false
-    labels:
-      custom-alerting-rule-level: cluster
-      role: thanos-alerting-rules
-      thanosruler: thanos-rule
-    alertRules: [ ]
 
 eventProxy:
   enabled: false
