@@ -271,18 +271,28 @@ Master:
       import hudson.security.*
 
       def adminUsername = System.getenv('ADMIN_USER')
-      // println "user: ${adminUsername}"
       def adminPassword = System.getenv('ADMIN_PASSWORD')
-      // println "password: ${adminPassword}"
-      // avoid reset the user
-      if (hudson.model.User.getById(adminUsername, false) == null) {
-        def hudsonRealm = new HudsonPrivateSecurityRealm(false)
-        hudsonRealm.createAccount(adminUsername, adminPassword)
-
-        def instance = Jenkins.getInstance()
-        instance.setSecurityRealm(hudsonRealm)
-        instance.save()
+      if (!adminUsername || !adminPassword) {
+        println "Warning: ADMIN_USER or ADMIN_PASSWORD environment variables are not set. It's dangerous to run Jenkins without authentication."
+        return
       }
+      def instance = Jenkins.getInstance()
+      def hudsonRealm = instance.getSecurityRealm()
+      if (!(hudsonRealm instanceof HudsonPrivateSecurityRealm)) {        
+        hudsonRealm = new HudsonPrivateSecurityRealm(false) 
+        instance.setSecurityRealm(hudsonRealm)
+      }
+      
+      def existingUser = hudsonRealm.getUser(adminUsername)
+      if (existingUser) {
+        println "User '${adminUsername}' already exists. Updating password."
+        existingUser.changePassword(adminPassword)
+      } else {
+        println "Creating new user '${adminUsername}'."
+        hudsonRealm.createAccount(adminUsername, adminPassword)
+      }
+      instance.save()
+      println "User '${adminUsername}' has been configured successfully."
 
   CustomConfigMap: false
   # By default, the configMap is only used to set the initial config the first time
